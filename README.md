@@ -1,2 +1,2 @@
-# 2024-Summer-UGRP-
+# 2024-Summer-UGRP
 UGRP Report
