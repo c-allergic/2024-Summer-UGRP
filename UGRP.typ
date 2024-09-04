@@ -121,20 +121,24 @@ Introduce Ising model that is used for optimization problem and conclude that it
 ]
 #align(left)[
   Figure 1: P, NP, and NP-complete problems (citation). The circle represents the class of problems. The arrow represents the reduction from factoring to problems in the class of NP-complete. 
+
+#jinguo([curves too ugly.])
+
+#jinguo([Pleaes add problems in the package to the above diagram.])
 ]
 
 = From factoring to Ising machine
 == Factoring problem and array multiplier
-#jinguo("Add Diagram: Array multiplier. Explain the building block.")
-Factoring, a problem of decomposing an n-bit composite integer $m=p q$ into its prime factors $p$ and $q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
+Factoring, a problem of decomposing an $n$-bit composite integer $m=p q$ into its prime factors $p$ and $q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
 
 Array multiplier is used for multiplication of unsigned numbers with full adders and half adders connected as building blocks @asha2016performance. To clarify it, we consider a simple multiplication of 3-bits binary numbers
 
 $ 6 times 5 = 6 arrow 101 times 110 = 11110, $
 the graphical representation of its vertical calculation and array multiplier is shown in Figure 1.
 
+#jinguo([bad example, better to use two prime numbers such as 5 x 7])
 
-#align(center)[#canvas(length: 1cm,{
+#align(figure(scale(canvas(length: 1cm, {
   import draw: *
   import decorations: *
   /// vertical calculation
@@ -253,13 +257,17 @@ the graphical representation of its vertical calculation and array multiplier is
   //blackbox((0,0),0.5,"a")
   //brace((1.2,-2),(1.2,2.5),name:"brace")
   //content((1.3,-1.6),"nihao",anchor:"west")
-})]
-
-#align(left)[
-  Figure 2: (a) Vertical calculation of 3-bits binary numbers. 
+}), x: 60%, y:60%, reflow: true),
+caption: [
+  (a) Vertical calculation of 3-bits binary numbers. 
   (b) Array multiplier @nguyen2023quantum. Each horizontal layer represents one bit of multiplicand times every bit of multiplier to obtain the partial product. Note that the elements on one thick line are the same and they are not the outputs of blackbox.
   (c) Design of blackbox. A blackbox is constructed of an AND gate and a full adder. The four inputs of blackbox are respectively: one bit of mulpicand and one bit of multiplier, the carry-in and sum-in. Outputs are the carry-out and sum-out.
 ]
+
+
+))
+
+#jinguo([image too wide, need to be adjusted.])
 
 #linebreak()
 #linebreak()
@@ -269,6 +277,10 @@ Using the array multiplier shown in Fig 2.(a), we could efficently reduce a fact
 
 A boolean circuit is a directed graph with source nodes(inputs) and one or more sink nodes(output). The internal nodes, known as "gate", produce logical function of inputs. One could devide a circuit into a series of layers of gates and the gates from each layer receive inputs from the layer above them @moore2011nature. Back to the array multiplier and blackbox in Figure 2, it is obvious that each blackbox contains several constraints to its input and we could put this constraints into a corresponding layer in the circuit. Here, for a $n times n$ multiplier, we could define the constraint for each blackbox as:
 $ s_(i,j) + 2c_(i,j) = p_i q_j + c_(i-1,j) + s_(i,j-1) $  <blackbox>
+
+#jinguo([symbols should be annotated in the above figure.])
+
+#jinguo([this equation should appear in the previous section])
 
 for $i,j in {0,1,dots,n}$, let $c_(i j)$ and $s_(i j)$ represent the carry-out and sum-out, $p_i$ and $q_j$ denote the $i$th bit of the multiplicand and the $j$th bit of the multiplier, and $c_(i-1,j)$ and $s_(i,j-1)$ refer to carry-in and sum-in, where $i-1$ and $j-1$ simply indicates that each blackbox receives carry-out from the last blackbox in the same row, and sum-out from the  upper-left blackbox(which, in vertical calculation corresponds to the previous column) @nguyen2023quantum. In fact, the constraints are extracted from the truth table of AND gate and full adder and it elegantly simulates the logical operations in array multiplier through a system of these equations. Given these constraint equations, one could reduce factoring problem to circuit sat problem by putting the constraints of factoring problem into corresponding layers in the circuit. 
 == Circuit Satisfaction $arrow$ QUBO
