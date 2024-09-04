@@ -84,15 +84,19 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
   
 
 = Introduction: Encryption system and the factoring problem
-Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a pkg that help reduce problems of different types into your target problem
 
-[main figure]
+Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
 
-Introduction to hardware.
+#jinguo([please add a main figure])
 
-Hardness classification.
+#jinguo([Introduction to hardware.])
 
 #jinguo("Image: Ising machine. Cite one from the article. Cite in the caption.")
+
+#jinguo([Closest lattice vector as a future step.
+1. Schnorr, Claus Peter. "Fast factoring integers by SVP algorithms, corrected." Cryptology ePrint Archive (2021).
+2. Micciancio, Daniele. "The hardness of the closest vector problem with preprocessing." IEEE Transactions on Information Theory 47.3 (2001): 1212-1215.
+])
 
 = Computational hardness and problem reductions
 
