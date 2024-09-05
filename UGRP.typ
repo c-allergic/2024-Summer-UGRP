@@ -82,7 +82,6 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
   }
 }
   
-
 = Introduction: Encryption system and the factoring problem
 
 Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
@@ -135,8 +134,6 @@ Array multiplier is used for multiplication of unsigned numbers with full adders
 
 $ 5 times 7 = 35 arrow 111 times 101 = 100011, $
 the graphical representation of its vertical calculation and array multiplier is shown in Figure 1.
-
-#jinguo([bad example, better to use two prime numbers such as 5 x 7]) *solved*
 
 #align(figure(scale(canvas(length: 1cm, {
   import draw: *
@@ -282,17 +279,12 @@ caption: [
 
 ))
 
-#jinguo([image too wide, need to be adjusted.]) *solved*
-
 #linebreak()
 #linebreak()
 Observing the array multiplier and blackbox in Figure 2, it is obvious that each blackbox contains several constraints to its input. Here, for such a $n times n$ multiplier, we could define the constraint for each blackbox as:
 $ s_(i,j) + 2c_(i,j) = p_i q_j + c_(i-1,j) + s_(i+1,j-1) $  <blackbox>
 
 $ c_(-1,j) = s_(i,-1) = 0 $
-#jinguo([symbols should be annotated in the above figure.]) *solved*
-
-#jinguo([this equation should appear in the previous section]) *solved*
 
 for $i,j in {0,1,dots,n}$, let $c_(i j)$ and $s_(i j)$ represent the carry-out and sum-out, $p_i$ and $q_j$ denote the $i$th bit of the multiplicand and the $j$th bit of the multiplier, and $c_(i-1,j)$ and $s_(i,j-1)$ refer to carry-in and sum-in, where $i-1$ and $j-1$ simply indicates that each blackbox receives carry-out from the last blackbox in the same row, and sum-out from the  upper-left blackbox(which, in vertical calculation corresponds to the previous column) @nguyen2023quantum.
 Using the array multiplier shown in Fig 2.(a), we could efficently reduce a factoring problem to a circuit satisfaction problem.
@@ -306,7 +298,6 @@ Firstly, we give a formal definition of the Quadratic Unconstrained Binary Optim
 $ "QUBO: minimize/maximize" y=x^t Q x $ where x is a vector of binary decision variables and Q is a square matrix of constants.
 For constrained optimization problems, quadratic penalties are introduced to simulate the constraints so that the constraints problems could be re-formulated into QUBO problems effectively @glover2022quantum. As an example, we consider the logical operations and their corresponding QUBO penalties in Table 1.
 
-#jinguo("show gadgets: matrices J and h.") *solved*
 #align(center)[
   #table(
     columns: 2,
@@ -374,17 +365,18 @@ Julia is a modern, open-source, high performance programming language for techni
 In this section, we will introduce how to use `ProblemReductions.jl`(See Appendix @ProblemReductions.jl). The main function of the package is problem reduction. It defines a set of computational hard problem(`models`) and provides feasible interface(`reduction_graph` and `reduceto`)  to reduce one to another. Here is an example of reduce a factoring problem to a spin glass problem through the package.
 
 Consider factoring problem: $6 = p times q$, note that in the package, the parameters for factoring problem is `m`, `n` and `input` where `m` and `n` is the number of bits for the factors and `input` is the number to be factored. Open a Julia REPL and run the following code:
-```
-Julia> using ProblemReductions  #import the package
+```julia
+julia> using ProblemReductions  #import the package
 
-Julia> factoring = Factoring(3,3,6) # 3 bits factors and 6 as input
+julia> factoring = Factoring(3,3,6) # 3 bits factors and 6 as input
+Factoring(3, 3, 6)
 ```
 The outcome would be an instance of `Factoring` model. Then we use `reduction_graph` and `reduction_path` to find the path from factoring to spin glass problem.
 
-```
-Julia> g = reduction_graph() # get the reduction graph
+```julia
+julia> g = reduction_graph(); # get the reduction graph
 
-Julia> path = reduction_path(g, factoring, SpinGlass())                                        
+julia> path = reduction_paths(Factoring, SpinGlass)
 ```
 
 *Code not yet been tested*
