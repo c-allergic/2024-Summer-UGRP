@@ -385,6 +385,9 @@ julia> path = reduction_paths(Factoring, SpinGlass)
 
 Conclude the work and try to find the shortcomings: not complete reduction graph would lead to bad reduction complexity(bad scalability); existing solver `BruteForce` is bad, we need a better solvers that may simulate the Ising machine in order to realize this idea.
 
+= Acknowledgements
+#jinguo([Thank XXX for the help in the project.])
+
 = Appendix
 
 == Julia <Julia>
@@ -402,6 +405,7 @@ Conclude the work and try to find the shortcomings: not complete reduction graph
 My contribution the the package as _c-allergic_ during the summer vacation:
 -  #link("https://github.com/GiggleLiu/ProblemReductions.jl/graphs/contributors")[Code Contributions]
 
+#jinguo([please list the PRs])
 
 
 - #link("https://github.com/GiggleLiu/ProblemReductions.jl/pulls?q=author%3Ac-allergic")[Pull Requests]
