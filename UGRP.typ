@@ -1,5 +1,6 @@
 #import "@preview/unequivocal-ams:0.1.1": ams-article, theorem, proof
 #import "@preview/cetz:0.2.2": canvas,draw,tree,decorations
+#import "@preview/codly:1.0.0": *
 #set text(
   font:"Times New Roman",
   size: 12pt
@@ -11,10 +12,23 @@
 #show: ams-article.with(
   bibliography: bibliography("refs.bib"), 
 )
+#show raw.where(block: true): set text(size: 0.8em)
+
 #set math.equation(numbering: "(1)")
 #align(center)[
   *Abstract*\
 ]
+
+#show: codly-init.with()
+
+#codly(
+  languages: (
+    julia: (
+      name: "Julia",
+      color: rgb("#CE412B"),
+    ),
+  )
+)
 
 #let jinguo(txt) = {
   text(blue)[JG: #txt]
@@ -387,9 +401,16 @@ SpinGlass{HyperGraph, Vector{Int64}}(HyperGraph(90, [[1, 2], [1, 3], [2, 3], [1]
 
 julia> import GenericTensorNetworks  # solver
 
-julia> gtn_problem = GenericTensorNetworks.SpinGlass(target.graph.n, target.graph.edges, target.weights)
+julia> gtn_problem = GenericTensorNetworks.SpinGlass(
+                  target.graph.n,
+                  target.graph.edges,
+                  target.weights
+                )
 
-julia> result = GenericTensorNetworks.solve(GenericTensorNetwork(gtn_problem), SingleConfigMin())[]
+julia> result = GenericTensorNetworks.solve(
+                  GenericTensorNetwork(gtn_problem),
+                  SingleConfigMin()
+                )[]
 (-92.0, ConfigSampler{44, 1, 1}(10000000000000110101000001010010000011010000))ₜ
 
 julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
