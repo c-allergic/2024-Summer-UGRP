@@ -368,8 +368,8 @@ Consider factoring problem: $6 = p times q$, note that in the package, the param
 ```julia
 julia> using ProblemReductions  #import the package
 
-julia> factoring = Factoring(3,3,6) # 3 bits factors and 6 as input
-Factoring(3, 3, 6)
+julia> factoring = Factoring(2, 2, 6) # 3 bits factors and 6 as input
+Factoring(2, 2, 6)
 ```
 The outcome would be an instance of `Factoring` model. Then we use `reduction_graph` and `reduction_path` to find the path from factoring to spin glass problem.
 
@@ -377,7 +377,29 @@ The outcome would be an instance of `Factoring` model. Then we use `reduction_gr
 julia> g = reduction_graph(); # get the reduction graph
 
 julia> path = reduction_paths(Factoring, SpinGlass)
+1-element Vector{Vector{Type}}:
+ [Factoring, CircuitSAT, SpinGlass]
+
+julia> reduction_result = implement_reduction_path(path[1], factoring);
+
+julia> target = target_problem(reduction_result)
+SpinGlass{HyperGraph, Vector{Int64}}(HyperGraph(90, [[1, 2], [1, 3], [2, 3], [1], [2], [3], [4], [3, 4], [3, 5], [3, 6]  …  [84, 88], [82, 88], [88], [83, 89], [63, 89], [89], [88, 89], [88, 90], [89, 90], [90]]), [1, -2, -2, 3, 3, 0, 0, 1, -1, -2  …  -2, -2, -3, -2, -2, -3, 1, -2, -2, 1])
+
+julia> import GenericTensorNetworks  # solver
+
+julia> gtn_problem = GenericTensorNetworks.SpinGlass(target.graph.n, target.graph.edges, target.weights)
+
+julia> result = GenericTensorNetworks.solve(GenericTensorNetwork(gtn_problem), SingleConfigMin())[]
+(-92.0, ConfigSampler{44, 1, 1}(10000000000000110101000001010010000011010000))ₜ
+
+julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
+4-element Vector{Int64}:
+ 1
+ 1
+ 0
+ 1
 ```
+The result is $p = 3$ and $q = 2$ which is the correct factors of 6. The code above shows how to reduce a factoring problem to a spin glass problem and solve it using the `GenericTensorNetworks` package. The `GenericTensorNetworks` package is a solver for the Ising machine and it provides a set of solvers for the Ising machine. The `SingleConfigMin` is a solver that finds the minimum energy configuration of the Ising machine. The `extract_solution` function is used to extract the solution from the result of the solver. The solution is then used to find the factors of the input number.
 
 *Code not yet been tested*
 
