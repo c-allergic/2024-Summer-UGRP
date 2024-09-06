@@ -104,28 +104,39 @@ Introduce Ising model that is used for optimization problem and conclude that it
 
 #jinguo("Add Diagram: P, NP problem, NP-complete problem, circles, problems and reductions")
 
-#align(center)[
-  #canvas({ 
-    import draw: *
-    circle((),radius:3,name:"NP",)
-    content("NP.north-west","NP",anchor:"south-east")
-    catmull((-1,0.4),(-2,1),(-1,2),(0,1),(0,0),(-1,0.4),name:"P")
-    content((-1,1),"P")
-    catmull((-1,-2),(-0.5,-2),(1.5,-1.7),(1,-1),(-1,-1),(-1,-2),name:"NP-complete")
-    content((0.3,-1.5),"NP-complete")
-    rect((0.6,0.4),(rel:(1.5,0.5)),name:"Factoring")
-    content((1.35,0.65),"Factoring")
-    line((name:"Factoring",anchor:"south"),(1,-1),mark:(end:"straight"))
-    }
-  )
-]
-#align(left)[
-  Figure 1: P, NP, and NP-complete problems (citation). The circle represents the class of problems. The arrow represents the reduction from factoring to problems in the class of NP-complete. 
+#align(figure(scale(canvas(length: 1cm, {
+  import draw: *
+  circle((),radius:3,name:"NP",)
+  content("NP.north-west","NP",anchor:"south-east")
+  rect((-1.5,0.5),(rel:(1,1)),name:"P",radius: 30%)
+  content((-1,1),"P")
+  rect((-1,-2),(rel:(2.5,1)),name:"NP-complete",radius: 30%)
+  content((0.3,-1.5),"NP-complete")
+  rect((0.5,0.3),(rel:(1.6,0.6)),name:"Factoring",radius: 30%)
+  content((1.35,0.65),"Factoring")
+  line((name:"Factoring",anchor:"south"),(1,-1),mark:(end:"straight"))
 
-#jinguo([curves too ugly.])
+  set-origin((0,0))
+  set-style(
+    line: (stroke: (dash: "dashed")),
+    rect: (fill: none,stroke:(dash: "dashed")),
+  )
+  rect((5,0),(rel:(4,3)),name:"ProblemReductions.jl")
+  line((name: "NP-complete", anchor: 45deg),(name: "ProblemReductions.jl", anchor: 135deg))
+  line((name: "NP-complete", anchor: 320deg),(name: "ProblemReductions.jl", anchor: 225deg))
+  content((7,2.5),"Circuit SAT")
+  content((7,1.5),"QUBO")
+  content((7,0.5),"Spin Glass")  
+}), x: 60%, y:60%, reflow: true),
+caption: [
+ P, NP, and NP-complete problems (citation). The circle represents the class of problems. The arrow represents the reduction from factoring to problems in the class of NP-complete. 
+]
+))
+  
+#jinguo([curves too ugly.]) *solved*
 
 #jinguo([Pleaes add problems in the package to the above diagram.])
-]
+] *solved*
 
 = From factoring to Ising machine
 == Factoring problem and array multiplier
