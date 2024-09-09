@@ -3,11 +3,11 @@
 #import "@preview/codly:1.0.0": *
 #set text(
   font:"Times New Roman",
-  size: 12pt
+  size: 12pt,
 )
 #set par(
   justify: false,
-  leading: 2.0em
+  leading: 2em,
 )
 #show: ams-article.with(
   bibliography: bibliography("refs.bib"), 
@@ -129,7 +129,6 @@ Introduce Ising model that is used for optimization problem and conclude that it
   content((1.35,0.65),"Factoring")
   line((name:"Factoring",anchor:"south"),(1,-1),mark:(end:"straight"))
 
-  set-origin((0,0))
   set-style(
     line: (stroke: (dash: "dashed")),
     rect: (fill: none,stroke:(dash: "dashed")),
@@ -140,16 +139,17 @@ Introduce Ising model that is used for optimization problem and conclude that it
   content((7,2.5),"Circuit SAT")
   content((7,1.5),"QUBO")
   content((7,0.5),"Spin Glass")  
+  content((-3.4,0),"(a)")
+  content((7,-0.2),"(b)",anchor: "north")
 }), x: 60%, y:60%, reflow: true),
 caption: [
- P, NP, and NP-complete problems (citation). The circle represents the class of problems. The arrow represents the reduction from factoring to problems in the class of NP-complete. 
+  (a)
+  A possible diagram of P, NP, and NP-complete problems @garey1979computers. The circle represents the class of problems. The arrow represents the reduction from factoring to problems in the class of NP-complete. 
+ (b)
+  Several Problems in the package ProblemReductions.jl. 
 ]
 ))
   
-#jinguo([curves too ugly.]) *solved*
-
-#jinguo([Pleaes add problems in the package to the above diagram.])
-] *solved*
 
 = From factoring to Ising machine
 == Factoring problem and array multiplier
@@ -191,8 +191,6 @@ the graphical representation of its vertical calculation and array multiplier is
   //caption
   content((0,-1.5),"(a)vertical calculation")
   
-
-
 
   ///array multiplier
   set-origin((5.5,-6))
@@ -309,14 +307,14 @@ caption: [
 Observing the array multiplier and blackbox in Figure 2, it is obvious that each blackbox contains several constraints to its input. Here, for such a $n times n$ multiplier, we could define the constraint for each blackbox as:
 $ s_(i,j) + 2c_(i,j) = p_i q_j + c_(i-1,j) + s_(i+1,j-1) $  <blackbox>
 
-$ c_(-1,j) = s_(i,-1) = 0 $
+$ c_(-1,j) = s_(i,-1) = 0 $ <functionality>
 
 for $i,j in {0,1,dots,n}$, let $c_(i j)$ and $s_(i j)$ represent the carry-out and sum-out, $p_i$ and $q_j$ denote the $i$th bit of the multiplicand and the $j$th bit of the multiplier, and $c_(i-1,j)$ and $s_(i,j-1)$ refer to carry-in and sum-in, where $i-1$ and $j-1$ simply indicates that each blackbox receives carry-out from the last blackbox in the same row, and sum-out from the  upper-left blackbox(which, in vertical calculation corresponds to the previous column) @nguyen2023quantum.
-Using the array multiplier shown in Fig 2.(a), we could efficently reduce a factoring problem to a circuit satisfaction problem.
 
-== Factoring $arrow$ Circuit Satisfaction
+== Factoring $arrow$ Circuit Satisfaction 
 
-A boolean circuit is a directed graph with source nodes(inputs) and one or more sink nodes(output). The internal nodes, known as "gate", produce logical function of inputs. One could devide a circuit into a series of layers of gates and the gates from each layer receive inputs from the layer above them @moore2011nature. In fact, the constraints are extracted from the truth table of AND gate and full adder and it elegantly simulates the logical operations in array multiplier through a system of these equations. Given these constraint equations, one could reduce factoring problem to circuit sat problem by putting the constraints of factoring problem into corresponding layers in the circuit. 
+A boolean circuit is a directed graph with input nodes and one or more output node. The internal nodes, known as "gate", produce logical function of inputs. One could devide a circuit into a series of layers of gates and the gates from each layer receive inputs from the layer above them @moore2011nature. Based on this "layer" design, we could reduce factoring to circuit sat simply by pushing all the constraints in the blackbox to certain layers in the circuit. 
+
 == Circuit Satisfaction $arrow$ QUBO
 
 Firstly, we give a formal definition of the Quadratic Unconstrained Binary Optimization (QUBO) model. Definition: The QUBO model is expressed by the optimization problem:
@@ -335,20 +333,21 @@ For constrained optimization problems, quadratic penalties are introduced to sim
     [$z = x_1 xor x_2$],[$2x_1x_2-2(x_1+x_2)z-4(x_1+x_2)a+4a z+x_1+x_2+z+4a$]
   )
   Table 1:  QUBO Penalties for Logical Operations @noauthor_reformulating_nodate
-  $ z = not x arrow y = (x space z) mat(-1,1;
+  $ z = not x arrow y = mat(x,z;delim:"[") mat(-1,1;
   1,-1;delim: "[") mat(x;
   z;delim: "[") $
   QUBO expression of $z= not x$
 ]
 In Table 1, all the variables are intended to be binary value and note that in that case, we have $ x_i^2 = x_i $ and thereby we could transform the linear part into quadratic one @glover2022quantum. For each truth assignment of the variables, the penalty would be 0 if the logical operation is satisfied and be larger than 0 otherwise. By checking whether the penalty is 0, we could determine whether the logical operation is satisfied. Given this penalties gadgets, we process by considering a simple conjunction of two gedgets. Given a circuit sat example
 
-#align(center)[#canvas(length: 1cm,{  
+#align(center)[
+  #canvas(length: 0.8cm,{  
   import draw: *
   circontent(-.6,0,$x_1$,0.5,"x1")
   circontent(1.4,0,$x_2$,0.5,"x2")
-  recontent(-1,-2,"AND",0.8,"and1")
-  recontent(1,-2,"OR",0.8,"or1")
-  recontent(0,-3.5,"AND",0.8,"and2")
+  recontent(-1,-2,text(6pt)[AND],0.8,"and1")
+  recontent(1,-2, text(6pt)[OR],0.8,"or1")
+  recontent(0,-3.5,text(6pt)[AND],0.8,"and2")
   circontent(0.4,-4.4,$z$,0.5,"z")
   line("x1","and1",mark:(end:"straight"))
   line("x2","and1",mark:(end:"straight"))
@@ -364,27 +363,42 @@ In Table 1, all the variables are intended to be binary value and note that in t
 ]
 In (a), there is a simple conjuction of an AND gate and an OR gate. The output of them, $y_1$ and $y_2$, is then connected to the AND gate in the next layer as inputs. The conjuction of the two gates in the first layer is given by:
 $ z = y_1y_2 -2(y_1+y_2)z+3z $ <conjunction>
-So by simply change the literals in the QUBO penalty, we could simulate the conjuction of two gadgets and therby the circuit sat problem. The whole reduction of (a), from circuit sat to QUBO, is givenm by:
+So by simply change the literals in the QUBO penalty, we could simulate the conjuction of two gadgets and therby the circuit sat problem. The whole reduction of (a), from circuit sat to QUBO, is given by:
 $ y_1 = x_1x_2-2(x_1+x_2)y_1+3y_1 $   $ y_2 = x_1 x_2 + (x_1 + x_2)(1-2y_2)+ y_2 $  #align(center)[and @conjunction]
 
  
 
 == QUBO $arrow$ Spin glass and Ising machine
 
-The problem of spin glasses is of great interest both in solid state physics and in statistical physics. Magnetic alloys such as Au and Cu where 1% of magnetic impurities are embeed are studied in spin glass problem. In spin glss, there is an energy interaction between spins of the two impurities
-$ H_12 = J_12 sigma_1 sigma_2 $
-where $sigma_1$ and $sigma_2$ are the spins of the two impurities and $J_12$ is the interaction @barahona1982computational. For a configuration $sigma ={sigma_1,sigma_2,...,sigma_n} $ where $sigma_i = {+1,-1}$, the energy of the configuration is given by Hamiltonian
+=== Reduction from QUBO to Spin glass
+
+The problem of spin glasses is of great interest both in solid state physics and in statistical physics. Simply speaking, in a spin glass system, there are many spins that interact with each other and the onsite energy, such as magnetic field. In spin glss, there is an energy interaction between spins: 
+$H_12 = J_12 sigma_1 sigma_2$,
+where $sigma_1$ and $sigma_2$ are the spins and $J_12$ is the interaction @barahona1982computational. For a configuration $sigma ={sigma_1,sigma_2,...,sigma_n},  $ where $sigma_i = {+1,-1}$, the energy of the configuration is given by the Hamiltonian
 
 $ H = sum_(i,j) J_(i j) sigma_i sigma_j + sum_(i) h_i sigma_i. $ <spinglass-energy>
-The parameters $J$ and $h$ correspond to the energies associated with spins' interactions with other spins and the external field, respectively. Note that in @spinglass-energy we set the sign to be positive to keep consistent with QUBO's penalty rules. For a ferromagnet, $J$ is positive and a configuration with most interacting spins having parallel moments ($sigma_i = sigma_j$) has lower energy.
+The parameters $J$ and $h$ correspond to the energies associated with spins' interactions with other spins and the external field, respectively. Note that in @spinglass-energy we set the sign to be positive to keep consistent with QUBO's penalty rules. For a ferromagnet, $J$ is positive and a configuration with most interacting spins having parallel moments ($sigma_i = sigma_j$) has lower energy and vice versa. Here we notice that the Hamiltonian is composed of quadratic sum term and linear sum term, which is close to a QUBO form except that spin's value is not binary. A simple way to convert it is by setting $x_i = (1-2sigma_i)/2$ and substitute it into the QUBO penalty, after which we could obtain the Hamiltonian.
 
+Consider a simple example of QUBO: 
+$min y = mat(x_1,x_2;delim:"[") mat(-1,1;
+  1,-1;delim: "[") mat(x_1;
+  x_2;delim: "[")$, which is the QUBO penalty of $x_2 = not x_1$. We substitute $x_i = (1-2sigma_i)/2$ into the penalty and we have: $ y = mat((1-sigma_1)/2,(1-sigma_2)/2;delim:"[") mat(-1,1;
+  1,-1;delim: "[") mat((1-sigma_1)/2;
+  (1-sigma_2)/2;delim: "[") arrow y = -1/4 sigma_1^2 -1/4 sigma_2^2 + 1/2sigma_1sigma_2. $ Note that $sigma_i in {-1,1}$, so the square terms are actually constants. Therefore, we could simplify it and obtain the Hamiltonian of the target spin glass problem as: 
+  $ H = 1/2 sigma_1 sigma_2. $ We could verify its correctness by comparing the solution of both problems. For QUBO, the solution is $x_1 = 1, x_2 = 0$ and for the spin glass, the solution is $sigma_1 = -1, sigma_2 = 1$. Through the conversion, we could see that the two solutions are consistent.
 
+=== Ising machine
 
-= Code Implementation
+Ising model is actually a simplified version of spin glass model. The spins in Ising model would assumes one of the two values, +1 or -1, to settle themselves in the lowest energy state with numerous alternatives in the process.The Ising machine is designed to mimic this process and find the optimal solutions for the model.
+One of the  
 
 == Julia programming language
 
-Julia is a modern, open-source, high performance programming language for technical computing. It was born in 2012 in MIT. Though Julia is new, it has a large number of packages and a strong and fresh community(JuliaHub Inc). And the features of Julia, such as multiple dispatch, just-in-time compilation, and parallelism, makes Julia a good choice for scientific computing even if it's a dynamic programming language @bezanson2017julia. See Appendix @Julia for more details of Julia.
+Julia is a modern, open-source, high performance programming language for technical computing. It was born in 2012 in MIT. Though Julia is new, it has a large number of packages and a strong and fresh community(JuliaHub Inc).
+
+Julia is fast. Its feature of Just-In-Time compilation and its types system keep it from typical compilation and execution uncertainties @luo2020yao. At the same time, multiple dispatch feature allows the package based on Julia to be more flexible and extensible, which is not only important for the open-source community but also fit for requirements of the field of optimization problems.
+
+See Appendix @Julia for more details of Julia.
 == ProblemReductions.jl
 
 In this section, we will introduce how to use `ProblemReductions.jl`(See Appendix @ProblemReductions.jl). The main function of the package is problem reduction. It defines a set of computational hard problem(`models`) and provides feasible interface(`reduction_graph` and `reduceto`)  to reduce one to another. Here is an example of reduce a factoring problem to a spin glass problem through the package.
@@ -409,7 +423,10 @@ julia> reduction_result = implement_reduction_path(path[1], factoring);
 
 julia> target = target_problem(reduction_result)
 SpinGlass{HyperGraph, Vector{Int64}}(HyperGraph(90, [[1, 2], [1, 3], [2, 3], [1], [2], [3], [4], [3, 4], [3, 5], [3, 6]  …  [84, 88], [82, 88], [88], [83, 89], [63, 89], [89], [88, 89], [88, 90], [89, 90], [90]]), [1, -2, -2, 3, 3, 0, 0, 1, -1, -2  …  -2, -2, -3, -2, -2, -3, 1, -2, -2, 1])
+```
+The `reduction_graph` function returns a graph, where each vertex represent a `model` and each edge
 
+```julia
 julia> import GenericTensorNetworks  # solver
 
 julia> gtn_problem = GenericTensorNetworks.SpinGlass(
@@ -433,7 +450,6 @@ julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
 ```
 The result is $p = 3$ and $q = 2$ which is the correct factors of 6. The code above shows how to reduce a factoring problem to a spin glass problem and solve it using the `GenericTensorNetworks` package. The `GenericTensorNetworks` package is a solver for the Ising machine and it provides a set of solvers for the Ising machine. The `SingleConfigMin` is a solver that finds the minimum energy configuration of the Ising machine. The `extract_solution` function is used to extract the solution from the result of the solver. The solution is then used to find the factors of the input number.
 
-*Code not yet been tested*
 
 = CONCLUSIONS AND OUTLOOK
 
@@ -456,10 +472,32 @@ Conclude the work and try to find the shortcomings: not complete reduction graph
 
 == My Contributions to the Package
 
+=== Activities
 My contribution the the package as _c-allergic_ during the summer vacation:
 -  #link("https://github.com/GiggleLiu/ProblemReductions.jl/graphs/contributors")[Code Contributions]
+#figure(
+  image("commits.png",width:100%,),
+  caption: "Commits of the package ProblemReductions.jl: totally added 1694 lines of code and deleted 250 lines of code."
+)
 
-#jinguo([please list the PRs])
+=== Pull Requests
+
+13 merged pull requests in total.
+
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/83")[New: PaintShop model]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/81")[fix: parameters and set_parameters in Matching.jl and add tests]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/79")[New: matching model]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/78")[New: Maximal Independent Set]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/70")[Fix: xor symbol and others bugs]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/61")[Add: Reduction from SpinGlass{HyperGraph} -> MaxCut]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/57")[Clean up: unnecessary type deduction]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/56")[New: reduction from Sat to Coloring]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/53")[New: Reduction from vertex covering to set covering]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/49")[New: Vertex Covering model]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/44")[New: Reduction between simple kinds of SpinGlass and MaxCut problems]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/42")[New: MaxCut model]
+- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/39")[Set covering]
 
 
-- #link("https://github.com/GiggleLiu/ProblemReductions.jl/pulls?q=author%3Ac-allergic")[Pull Requests]
+
+
