@@ -95,12 +95,77 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
     return (name: name, anchor: 315deg)
   }
 }
+#let dashed-grid-spin(x1,y1,size,name) = {
+  draw.on-xz({
+    draw.rect((x1,y1),(rel:(size,size)),stroke:(dash: "dashed"),name:name)
+    draw.grid((x1,y1),(rel:(size,size)),stroke:(dash: "dashed"),step:.75)
+  })
+  draw.line((x1,y1 + .2 * size),(x1,y1 - 0.2*size),mark:(end:"straight"))
+  draw.line((x1 + .50 * size,y1 + .2 * size ),(x1 + 0.5*size,y1 - .2 * size),mark:(start:"straight"))
+  draw.line((x1 + size,y1 + .2 * size),(x1 + size,y1 - .2 * size),mark:(end:"straight"))
+  draw.line((x1 + .25 * size,y1 + 0.5 *size),(x1 + 0.25*size,y1 + 0.1 *size ),mark:(end:"straight"))
+  draw.line((x1 + .75 * size,y1 + 0.5 *size),(x1 + 0.75*size,y1 + 0.1 *size ),mark:(end:"straight"))
+  draw.line((x1 + 1.25 * size,y1 + 0.5 *size),(x1 + 1.25*size,y1 + 0.1 *size),mark:(start:"straight"))
+  draw.line((x1 + .5 * size,y1 + .75 *size),(x1 + .5*size,y1 + 0.35 *size),mark:(start:"straight"))
+  draw.line((x1 + size,y1 + .75 *size),(x1 + 1*size,y1 + 0.35 *size),mark:(start:"straight"))
+  draw.line((x1 + 1.5 * size,y1 + .75 *size),(x1 + 1.5*size,y1 + 0.35 *size),mark:(end:"straight"))
+}
+#let curve-box(x,y,size,name) = {
+  draw.rect((x,y),(rel:(size,size)),radius: 30%,name:name)
+}
+
+
   
 = Introduction: Encryption system and the factoring problem
 
 Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
 
-#jinguo([please add a main figure])
+#jinguo([please add a main figure]) *solved*
+
+#align(figure(scale(canvas(length: 1cm, {
+  import draw: *
+  curve-box(0,5,3,"factoring")
+  curve-box(0,0,3,"spinglass")
+  curve-box(6,0,3,"Ising-machine")
+  curve-box(6,5,3,"solution")
+  content((1.5,8.3),"(a) Factoring")
+  content((1.5,-.3),"(b) Spin Glass")
+  content((7.5,-.3),"(c) Ising Machine")
+  content((7.5,8.3),"(d) Solution")
+  content((1.5,6.5),$m = p times q$)
+  set-origin((-.1,1))
+  dashed-grid-spin(.5,0,1.5,"grid")
+  set-origin((.1,-1))
+  content((7.5,1.9),"Annealer")
+  content((7.5,1.1),"Tensor Network")
+  content((7.5,7),"configuration")
+  content((7.5,6.2),$ sigma = {-1,1,dots,1}$)
+  line("factoring","spinglass",mark:(end:"straight"),name:"1",stroke:2pt)
+  line("spinglass","Ising-machine",mark:(end:"straight"),name:"2",stroke:2pt)
+  line("Ising-machine","solution",mark:(end:"straight"),name:"3",stroke:2pt)
+  line("solution","factoring",mark:(end:"straight"),name:"4",stroke:2pt)
+  set-style(stroke: none)
+  on-layer(2,{content("1.mid", text(6pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
+  on-layer(1, {
+  circle("pkg.north-east", radius: .2, fill: red)
+  circle("pkg.south", radius: .3, fill: green)
+  circle("pkg.north-west", radius: .2, fill: blue)
+})
+on-layer(2,{content((4.5,7), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
+  on-layer(1, {
+  circle("pkg.north-east", radius: .2, fill: red)
+  circle("pkg.south", radius: .3, fill: green)
+  circle("pkg.north-west", radius: .2, fill: blue)
+})
+// line((4.5,4.5),(4.5,6.4),stroke:2pt,mark:(end:"straight"))
+// line((2.8,4),(1.6,4),stroke:2pt,mark:(end:"straight"))
+}), x: 60%, y:60%, reflow: true),
+caption: [
+Process of solving a factoring problem by Ising machine using `ProblemReductions.jl`.
+(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl.
+]
+))
+
 
 #jinguo([Introduction to hardware.])
 
@@ -389,8 +454,11 @@ $min y = mat(x_1,x_2;delim:"[") mat(-1,1;
 
 === Ising machine
 
-Ising model is actually a simplified version of spin glass model. The spins in Ising model would assumes one of the two values, +1 or -1, to settle themselves in the lowest energy state with numerous alternatives in the process.The Ising machine is designed to mimic this process and find the optimal solutions for the model.
-One of the  
+Ising model is actually a simplified version of spin glass model. The spins in Ising model would assumes one of the two values, +1 or -1, to settle themselves in the lowest energy state with numerous alternatives in the process.The Ising machine is designed to mimic this process and find the optimal solutions for the model. Many algorithms are used to realize the Ising machine, such as simulated annealing, quantum annealing, and tensor network. Here are examples of the Ising machine:
+
+\\ 图片
+
+In a nutshell, Ising machine is a powerful tool for Ising model. After the whole reduction process, Ising machine could help us obtain a solution of target problem and through extracting the solution, we could get the solution for factoring.
 
 == Julia programming language
 
@@ -410,7 +478,8 @@ julia> using ProblemReductions  #import the package
 julia> factoring = Factoring(2, 2, 6) # 3 bits factors and 6 as input
 Factoring(2, 2, 6)
 ```
-The outcome would be an instance of `Factoring` model. Then we use `reduction_graph` and `reduction_path` to find the path from factoring to spin glass problem.
+When we initialize an instance, not only `Factoring`, we need to offer some information about the problem. For `Factoring`, we need to provide the number of bits for the factors and the number to be factored. And the outcome would be a `Factoring` instance with these information. 
+ 
 
 ```julia
 julia> g = reduction_graph(); # get the reduction graph
