@@ -476,18 +476,18 @@ Factoring(2, 2, 6)
 ```
 #scale(canvas(length: 1cm, {
   import draw: *
-  curve-box(0,0,2,"factoring")
-  content((1,1),$6 = p times q$)
-  set-origin((-5,1))
+  curve-box(-5.6,0,2,"factoring1")
+  content((-4.6,1),$6 = p times q$)
+  line((-3.5,1),(.5,1),mark:(end:"straight"),stroke:2pt)
+  content((2,.9),`Factoring(2,2,6)`,anchor:"south")
   set-style(stroke: none)
-on-layer(2,{content((0,0), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
+on-layer(2,{content((-1.5,1.7), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
 on-layer(1,{
   circle("pkg.north-east", radius: .2, fill: red)
   circle("pkg.south", radius: .3, fill: green)
   circle("pkg.north-west", radius: .2, fill: blue)
 })
-line((2,0),(4.7,0),mark:(end:"straight"),stroke:2pt,name:"define")
-content((3.35,0.2),`Factoring(2,2,6)`,anchor:"south")
+content((-1.5,0.7),"Initialization")
 }), x: 60%, y:60%, reflow: true)
 When we initialize an instance, not only `Factoring`, we need to offer some information about the problem. For `Factoring`, we need to provide the number of bits for the factors and the number to be factored. And the outcome would be a `Factoring` instance with these information.
 
@@ -504,6 +504,30 @@ julia> reduction_result = implement_reduction_path(path[1], factoring);
 julia> target = target_problem(reduction_result)
 SpinGlass{HyperGraph, Vector{Int64}}(HyperGraph(90, [[1, 2], [1, 3], [2, 3], [1], [2], [3], [4], [3, 4], [3, 5], [3, 6]  …  [84, 88], [82, 88], [88], [83, 89], [63, 89], [89], [88, 89], [88, 90], [89, 90], [90]]), [1, -2, -2, 3, 3, 0, 0, 1, -1, -2  …  -2, -2, -3, -2, -2, -3, 1, -2, -2, 1])
 ```
+#scale(canvas(length: 1cm, {
+  import draw: *
+  curve-box(-5.6,0,2.6,"factoring")
+  content((-4.2,2),`Factoring`)
+  content((-4.2,0.4),`SpinGlass`)
+  line((-4.2,1.8),(-4.2,0.6),mark:(end:"straight"),stroke:1pt,name:"reduce")
+  content((-4.1,1.4),"?", anchor:"west")
+  line((-2.8,1.3),(1,1.3),mark:(end:"straight"),stroke:2pt,name:"Findpath")
+  content((2,.9),``,anchor:"south")
+  curve-box(1.2,0,2.6,"SpinGlass",)
+  content((2.5,2),`Factoring`)
+  content((2.5,1.2),`Circuit SAT`)
+  content((2.5,0.4),`SpinGlass`)
+  line((2.5,1.8),(2.5,1.3),mark:(end:"straight"),stroke:1pt,name:"reduce1")
+  line((2.5,1),(2.5,0.5),mark:(end:"straight"),stroke:1pt,name:"reduce2")
+  set-style(stroke: none)
+  on-layer(2,{content((-1,2), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
+  on-layer(1,{
+    circle("pkg.north-east", radius: .2, fill: red)
+    circle("pkg.south", radius: .3, fill: green)
+    circle("pkg.north-west", radius: .2, fill: blue)
+  })
+  content((-1,1),"Find reduction path")
+}), x: 60%, y:60%, reflow: true)
 The `reduction_graph` function returns a graph, where each vertex represent a `model` and each edge represent a reduction from one model to another. The `reduction_paths` function returns a list of paths from the source model to the target model. Here we get a vector of problems: `[Factoring, CircuitSAT, SpinGlass]`. That means we need to reduce the factoring problem to a circuit satisfaction problem and then to a spin glass problem.  The `implement_reduction_path` function is used for problem reductions and it would return the result of the reduction. It's worth noticing that the reduction result is an instance of `AbstractReductionResult` class, which contains the information of the reduction process, not just single problem instance. The `target_problem` function is used to get the target problem from the reduction result. In this case, the target problem is a `SpinGlass` instance. 
 
 So the basic programs to implement the problem reduction using `ProblemReductions.jl` are as follows: 
@@ -534,15 +558,41 @@ julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
  0
  1
 ```
+#scale(canvas(length: 1cm, {
+  import draw: *
+  curve-box(.1,-.8,3,"SpinGlass")
+  content((1.6,1.7),text(13pt)[SpinGlass])
+  dashed-grid-spin(.5,0,1.5,"grid")
+  line((3.2,.7),(7,.7),mark:(end:"straight"),stroke:2pt)
+  content((5,1.3),text(14pt)[Ising Machine])
+  content((5,.4),`GenericTensorNetworks`)
+  curve-box(7.1,-.8,3,"Solution")
+  content((8.6,1.5),text(14pt)[Solution])
+  content((8.55,.5),text(12pt)[$space sigma = {1,-1,,dots}$])
+  line((10.3,.7),(14.1,.7),mark:(end:"straight"),stroke:2pt)
+  curve-box(14.3,-.8,3,"result")
+  content((15.8,1.5),text(14pt)[Result])
+  content((15.8,.5),text(12pt)[$110 = 11 times 10$])
+  set-style(stroke: none)
+  on-layer(2,{content((12,1.3), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
+  on-layer(1,{
+    circle("pkg.north-east", radius: .2, fill: red)
+    circle("pkg.south", radius: .3, fill: green)
+    circle("pkg.north-west", radius: .2, fill: blue)
+  })
+  content((12,.4),`extract_solution`)
+}), x: 60%, y:60%, reflow: true)
 The result is $p = 3$ and $q = 2$ which is the correct factors of 6. The code above shows how to reduce a factoring problem to a spin glass problem and solve it using the `GenericTensorNetworks` package. The `GenericTensorNetworks` package is a solver for the Ising machine and it provides a set of solvers for the Ising machine. The `SingleConfigMin` is a solver that finds the minimum energy configuration of the Ising machine. The `extract_solution` function is used to extract the solution from the result of the solver. The solution is then used to find the factors of the input number.
 
 
 = CONCLUSIONS AND OUTLOOK
 
-Conclude the work and try to find the shortcomings: not complete reduction graph would lead to bad reduction complexity(bad scalability); existing solver `BruteForce` is bad, we need a better solvers that may simulate the Ising machine in order to realize this idea.
+Conclude the work and try to find the shortcomings: not complete reduction graph would lead to bad reduction complexity(bad scalability); existing solver `BruteForce` is bad, we need a better solvers tha may simulate the Ising machine in order to realize this idea.
 
 = Acknowledgements
-#jinguo([Thank XXX for the help in the project.])
+
+
+Thank the authors of the package `ProblemReductions.jl`: Jinguo Liu, Chenguang Guan, and Huaiming Yu for their contributions to the package. Thank Huanhai Zhou for advices on the report writing. We acknowledge the funding support provided by Research Department of HKUST(GZ) through UGRP program.
 
 = Appendix
 
