@@ -114,7 +114,14 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
   draw.rect((x,y),(rel:(size,size)),radius: 30%,name:name)
 }
 
+#jinguo([The story: we use Ising machine to solve QUBO. However, we use GenericTensorNetworks instead, since we do not have a hardware.])
 
+#jinguo([Introduction to hardware.])
+
+#jinguo("Image: Ising machine. Cite one from the article. Cite in the caption.")
+
+#jinguo([Closest lattice vector as a future step.@schnorr2021fast @micciancio2001hardness
+])
   
 = Introduction: Encryption system and the factoring problem
 
@@ -165,15 +172,6 @@ Process of solving a factoring problem by Ising machine using `ProblemReductions
 ]
 ))
 
-
-#jinguo([Introduction to hardware.])
-
-#jinguo("Image: Ising machine. Cite one from the article. Cite in the caption.")
-
-#jinguo([Closest lattice vector as a future step.
-1. Schnorr, Claus Peter. "Fast factoring integers by SVP algorithms, corrected." Cryptology ePrint Archive (2021).
-2. Micciancio, Daniele. "The hardness of the closest vector problem with preprocessing." IEEE Transactions on Information Theory 47.3 (2001): 1212-1215.
-])
 
 = Computational hardness and problem reductions
 
