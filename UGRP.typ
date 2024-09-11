@@ -31,7 +31,7 @@
 )
 
 #let jinguo(txt) = {
-  text(blue)[JG: #txt]
+  text(blue)[[JG: #txt]]
 }
 //basic shapes
 #let blackbox((x,y),r,name) = draw.rect(
@@ -161,7 +161,7 @@ on-layer(2,{content((4.5,7), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: 
 }), x: 60%, y:60%, reflow: true),
 caption: [
 Process of solving a factoring problem by Ising machine using `ProblemReductions.jl`.
-(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl.
+(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl. #jinguo(["Annealer tensor network" $arrow.r$ "Execute on an Ising machine", the picture on edge is not clear.])
 ]
 ))
 
@@ -179,7 +179,7 @@ Process of solving a factoring problem by Ising machine using `ProblemReductions
 
 
 
-#align(figure(scale(canvas(length: 1cm, {
+#align([#figure(scale(canvas(length: 1cm, {
   import draw: *
   circle((),radius:3,name:"NP",)
   content("NP.north-west","NP",anchor:"south-east")
@@ -205,24 +205,29 @@ Process of solving a factoring problem by Ising machine using `ProblemReductions
   content((7,-0.2),"(b)",anchor: "north")
 }), x: 60%, y:60%, reflow: true),
 caption: [
-  (a)
-  A possible diagram of P, NP, and NP-complete problems @garey1979computers. The circle represents the class of problems. The arrow represents the reduction from factoring to problems in the class of NP-complete. 
- (b)
-  Several Problems in the package ProblemReductions.jl. 
+  (a) P, NP, and NP-complete problems @garey1979computers and their relation. The circles represent the classes of problems. The arrow represents the reduction from one problems to another. 
+ (b) Several Problems in the package `ProblemReductions.jl`. 
 ]
-))
+) <fig-problem-reductions>])
   
 
 = From factoring to Ising machine
-== Factoring problem and array multiplier
+== Factoring problem
 Factoring, a problem of decomposing an $n$-bit composite integer $m=p q$ into its prime factors $p$ and $q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
 
-Array multiplier is used for multiplication of unsigned numbers with full adders and half adders connected as building blocks @asha2016performance. To clarify it, we consider a simple multiplication of 3-bits binary numbers
+== Factoring $arrow$ Circuit Satisfaction
+
+The factoring problem can be reduced to the Circuit Satisfaction (Circuit SAT) problem.
+Circuit SAT is a problem of determining whether a given boolean circuit has a satisfying assignment. Hence, factoring is the problem of finding the satisfying assignment of the integer multiplication circuit.
+In computer science, the multiplication of two integers is often implemented using an _array multiplier_ as shown in @fig:multiplier.
+The basic idea of the array multiplier is to multiply each bit of the multiplicand with every bit of the multiplier and then add the partial products to obtain the final product @asha2016performance.
+The building block of the array multiplier is composed of an AND gate and a full adder as shown in @fig:multiplier.
+To clarify it, we consider a simple multiplication of 3-bits binary numbers
 
 $ 5 times 7 = 35 arrow 111 times 101 = 100011, $
-the graphical representation of its vertical calculation and array multiplier is shown in Figure 1.
+the graphical representation of its vertical calculation and array multiplier is shown in @fig-problem-reductions.
 
-#align(figure(scale(canvas(length: 1cm, {
+#align([#figure(scale(canvas(length: 1cm, {
   import draw: *
   import decorations: *
   /// vertical calculation
@@ -350,41 +355,42 @@ the graphical representation of its vertical calculation and array multiplier is
   content((4.1,2.65),"carry-in", anchor: "west")
   content((1,2.65),"carry-out", anchor: "east")
   content((2.47,1.3),"sum-out")
-  content((2.5,0.7),"(c)design of blackbox",anchor:"north")
+  content((2.5,0.7),"(c) design of blackbox",anchor:"north")
   //blackbox((0,0),0.5,"a")
   //brace((1.2,-2),(1.2,2.5),name:"brace")
   //content((1.3,-1.6),"nihao",anchor:"west")
 }), x: 60%, y:60%, reflow: true),
 caption: [
-  (a) Vertical calculation of 3-bits binary numbers. 
-  (b) Array multiplier @nguyen2023quantum. Each horizontal layer represents one bit of multiplicand times every bit of multiplier to obtain the partial product. Note that the elements on one thick line are the same and they are not the outputs of blackbox.
-  (c) Design of blackbox. A blackbox is constructed of an AND gate and a full adder. The four inputs of blackbox are respectively: one bit of mulpicand and one bit of multiplier, the carry-in and sum-in. Outputs are the carry-out and sum-out.
+  (a) The multiplication of 3-bits binary numbers. The vertical calculation of 7 times 5 is shown.
+  (b) The array multiplier @nguyen2023quantum circuit to implement the vertical calculation in (a).
+  The black boxes are the building blocks, and lines are variables. The variables on the thick line are the input variables.
+  Each horizontal layer represents multiplying one bit of multiplicand with every bit of multiplier to obtain the partial product.
+  The partial products are then added to obtain the final product.
+  (c) The building block of array multiplier (@blackbox). Each building block is composed of an AND gate and a full adder.
+  #jinguo([The lines are not arranged properly.])
+  //The four inputs of blackbox are respectively: one bit of mulpicand and one bit of multiplier, the carry-in and sum-in. Outputs are the carry-out and sum-out.
 ]
-
-
-))
+) <fig:multiplier>])
 
 #linebreak()
 #linebreak()
-Observing the array multiplier and blackbox in Figure 2, it is obvious that each blackbox contains several constraints to its input. Here, for such a $n times n$ multiplier, we could define the constraint for each blackbox as:
-$ s_(i,j) + 2c_(i,j) = p_i q_j + c_(i-1,j) + s_(i+1,j-1) $  <blackbox>
-
-$ c_(-1,j) = s_(i,-1) = 0 $ <functionality>
+Observing the array multiplier and blackbox#jinguo(["blackbox" is not a professional word]) in @fig:multiplier #jinguo([You should refer a figure like this]), it is obvious that each blackbox contains several constraints to its input. Here, for such a $n times n$ multiplier, we could define the constraint for each blackbox as:
+$ s_(i,j) + 2c_(i,j) = p_i q_j + c_(i-1,j) + s_(i+1,j-1) \
+c_(-1,j) = s_(i,-1) = 0 $  <blackbox>
 
 for $i,j in {0,1,dots,n}$, let $c_(i j)$ and $s_(i j)$ represent the carry-out and sum-out, $p_i$ and $q_j$ denote the $i$th bit of the multiplicand and the $j$th bit of the multiplier, and $c_(i-1,j)$ and $s_(i,j-1)$ refer to carry-in and sum-in, where $i-1$ and $j-1$ simply indicates that each blackbox receives carry-out from the last blackbox in the same row, and sum-out from the  upper-left blackbox(which, in vertical calculation corresponds to the previous column) @nguyen2023quantum.
-
-== Factoring $arrow$ Circuit Satisfaction 
 
 A boolean circuit is a directed graph with input nodes and one or more output node. The internal nodes, known as "gate", produce logical function of inputs. One could devide a circuit into a series of layers of gates and the gates from each layer receive inputs from the layer above them @moore2011nature. Based on this "layer" design, we could reduce factoring to circuit sat simply by pushing all the constraints in the blackbox to certain layers in the circuit. 
 
 == Circuit Satisfaction $arrow$ QUBO
+#jinguo([First introduce an concept ("What"), then explain "Why" and then "How". You usually starts with "How"...])
 
 Firstly, we give a formal definition of the Quadratic Unconstrained Binary Optimization (QUBO) model. Definition: The QUBO model is expressed by the optimization problem:
 $ "QUBO: minimize/maximize" y=x^t Q x $ where x is a vector of binary decision variables and Q is a square matrix of constants.
 For constrained optimization problems, quadratic penalties are introduced to simulate the constraints so that the constraints problems could be re-formulated into QUBO problems effectively @glover2022quantum. As an example, we consider the logical operations and their corresponding QUBO penalties in Table 1.
 
 #align(center)[
-  #table(
+  #figure(table(
     columns: 2,
     table.header(
       [*Logical Operation*],[*QUBO Penalty*]
@@ -393,14 +399,15 @@ For constrained optimization problems, quadratic penalties are introduced to sim
     [$z = x_1 or x_2$],[$x_1 x_2 + (x_1 + x_2)(1-2z)+ z$], 
     [$z = x_1 and x_2$],[$x_1x_2-2(x_1+x_2)z+3z$],
     [$z = x_1 xor x_2$],[$2x_1x_2-2(x_1+x_2)z-4(x_1+x_2)a+4a z+x_1+x_2+z+4a$]
-  )
-  Table 1:  QUBO Penalties for Logical Operations @noauthor_reformulating_nodate
+    ),
+    caption: [QUBO Penalties for Logical Operations @noauthor_reformulating_nodate
   $ z = not x arrow y = mat(x,z;delim:"[") mat(-1,1;
   1,-1;delim: "[") mat(x;
   z;delim: "[") $
-  QUBO expression of $z= not x$
+  QUBO expression of $z= not x$]
+  ) <tbl:qubo>,
 ]
-In Table 1, all the variables are intended to be binary value and note that in that case, we have $ x_i^2 = x_i $ and thereby we could transform the linear part into quadratic one @glover2022quantum. For each truth assignment of the variables, the penalty would be 0 if the logical operation is satisfied and be larger than 0 otherwise. By checking whether the penalty is 0, we could determine whether the logical operation is satisfied. Given this penalties gadgets, we process by considering a simple conjunction of two gedgets. Given a circuit sat example
+In @tbl:qubo, all the variables are intended to be binary value and note that in that case, we have $ x_i^2 = x_i $ and thereby we could transform the linear part into quadratic one @glover2022quantum. For each truth assignment of the variables, the penalty would be 0 if the logical operation is satisfied and be larger than 0 otherwise. By checking whether the penalty is 0, we could determine whether the logical operation is satisfied. Given this penalties gadgets, we process by considering a simple conjunction of two gedgets. Given a circuit sat example
 
 #align(center)[
   #canvas(length: 0.8cm,{  
@@ -489,6 +496,7 @@ on-layer(1,{
 })
 content((-1.5,0.7),"Initialization")
 }), x: 60%, y:60%, reflow: true)
+#jinguo([This figure contains too many useless information.])
 When we initialize an instance, not only `Factoring`, we need to offer some information about the problem. For `Factoring`, we need to provide the number of bits for the factors and the number to be factored. And the outcome would be a `Factoring` instance with these information.
 
 The next thing is to find out how to reduce the factoring to spin glass.
@@ -568,7 +576,7 @@ julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
   content((5,.4),`GenericTensorNetworks`)
   curve-box(7.1,-.8,3,"Solution")
   content((8.6,1.5),text(14pt)[Solution])
-  content((8.55,.5),text(12pt)[$space sigma = {1,-1,,dots}$])
+  content((8.55,.5),text(12pt)[$space sigma = {1,-1,dots}$])
   line((10.3,.7),(14.1,.7),mark:(end:"straight"),stroke:2pt)
   curve-box(14.3,-.8,3,"result")
   content((15.8,1.5),text(14pt)[Result])
