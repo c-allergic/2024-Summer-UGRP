@@ -117,19 +117,9 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
   draw.rect((x,y),(rel:(size,size)),radius: 30%,name:name)
 }
 
-#jinguo([The story: we use Ising machine to solve QUBO. However, we use GenericTensorNetworks instead, since we do not have a hardware.])
-
-#jinguo([Introduction to hardware.])
-
-#jinguo("Image: Ising machine. Cite one from the article. Cite in the caption.")
-
 #jinguo([Closest lattice vector as a future step.@schnorr2021fast @micciancio2001hardness
 ])
 
-#jinguo([Every figure must be cited in the text.])
-
-#jinguo([Use copilot!])
-  
 = Introduction: Encryption system and the factoring problem
 
 // Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
