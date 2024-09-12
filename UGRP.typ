@@ -9,8 +9,10 @@
   justify: false,
   leading: 2em,
 )
+
 #show: ams-article.with(
   bibliography: bibliography("refs.bib"), 
+  paper-size: "a4",
 )
 #show raw.where(block: true): set text(size: 0.8em)
 
@@ -125,10 +127,25 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
   
 = Introduction: Encryption system and the factoring problem
 
-Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
+// Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
+
+Prime factorization is a fundamental problem in number theory and cryptography. The practical hardness of factorization and the property that biprimes are easy to generate ensure the soundness of RSA Encryption System since factoring problem could be reduced to RSA problem @rivest1978method @aggarwal2009breaking.
+
+A possible solver lies in the context of Ising machine. Ising machine is used to solve optimization problems modeled by Ising problem. People have realized Ising machines through various algorithms, such as Simulated Annealing and Tensor Networks, and have even commercialized them with platforms such as D-Wave.
+
+#figure(
+  image("Ising.png"),
+  caption:[(a)Quantum Annealing Ising machine from D-Wave Systems Inc.@D-waveIsingmachine (b) A Boltzmann machine @kiraly2021atomic]
+)
 
 
-#align(figure(scale(canvas(length: 1cm, {
+
+The advantage of Ising hardwares' good performance and the potential of formulating any problems into Ising problem make it a promising candidate for solving the factoring problem @mohseni2022ising. 
+
+However, the factoring problem is not a conventional optimization problem. To solve it using an Ising machine, we first need to reduce it to an Ising model. Once the corresponding Ising problem is solved, the solution can then be extracted to the original factoring problem. This is the motivation behind developing our Julia package, ProblemReductions.jl, which facilitates the reduction of various types of problems into a target problem form.
+
+In this article, we aim to demonstrate the process of solving a factoring problem using an Ising machine with the assistance of ProblemReductions.jl, as depicted in @mainfigure. Since we do not have access to actual hardware, we employ the GenericTensorNetworks package instead, which provides a software-based Ising machine solver.
+#figure(scale(canvas(length: 1cm, {
   import draw: *
   curve-box(0,5,3,"factoring")
   curve-box(0,0,3,"spinglass")
@@ -167,9 +184,9 @@ on-layer(2,{content((4.5,7), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: 
 }), x: 60%, y:60%, reflow: true),
 caption: [
 Process of solving a factoring problem by Ising machine using `ProblemReductions.jl`.
-(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl. #jinguo(["Annealer tensor network" $arrow.r$ "Execute on an Ising machine", the picture on edge is not clear.]) *Solved*
+(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl. 
 ]
-))
+)<mainfigure>
 
 
 = Computational hardness and problem reductions
