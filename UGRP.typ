@@ -16,6 +16,7 @@
 )
 #show raw.where(block: true): set text(size: 0.8em)
 
+
 #set math.equation(numbering: "(1)")
 #align(center)[
   *Abstract*\
@@ -124,10 +125,25 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
 
 #jinguo([Closest lattice vector as a future step.@schnorr2021fast @micciancio2001hardness
 ])
+
+#jinguo([Every figure must be cited in the text.])
+
+#jinguo([Use copilot!])
   
 = Introduction: Encryption system and the factoring problem
 
 // Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
+
+#jinguo([
+1. We have the Ising machine, D-wave machine and quantum algorithms... with the potential to solve Spin-Glass much faster than traditional computers with von-Neuman architecture.
+2. Many problems can be reduced to Spin-Glass, e.g. those in NP. - introduce computational hardness.
+3. Among these problem, factoring is one of the most important problems in number theory and cryptography. It is in NP-intermediate, which means it is not in P and not NP-complete.
+4. Ways to solve factoring problem? Reduce to closest lattice vector problem, using array multiplier, both can be reduced to Ising model.
+5. The missing piece is to reduce a problem to Ising model. We develop a Julia package to help reduce problems of different types into Ising model.
+6. We developed a pacakge ProblemReductions.jl to solve this problem.
+7. Features..., show case.
+8. Finally, in appendix: my contribution.
+])
 
 Prime factorization is a fundamental problem in number theory and cryptography. The practical hardness of factorization and the property that biprimes are easy to generate ensure the soundness of RSA Encryption System since factoring problem could be reduced to RSA problem @rivest1978method @aggarwal2009breaking.
 
