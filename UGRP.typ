@@ -166,21 +166,6 @@ In this article, we aim to demonstrate the process of solving a factoring proble
   line("spinglass","Ising-machine",mark:(end:"straight"),name:"2",stroke:2pt)
   line("Ising-machine","solution",mark:(end:"straight"),name:"3",stroke:2pt)
   line("solution","factoring",mark:(end:"straight"),name:"4",stroke:2pt)
-  set-style(stroke: none)
-  on-layer(2,{content((.0,4), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
-  on-layer(1, {
-  circle("pkg.north-east", radius: .2, fill: red)
-  circle("pkg.south", radius: .3, fill: green)
-  circle("pkg.north-west", radius: .2, fill: blue)
-})
-on-layer(2,{content((4.5,7), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
-  on-layer(1, {
-  circle("pkg.north-east", radius: .2, fill: red)
-  circle("pkg.south", radius: .3, fill: green)
-  circle("pkg.north-west", radius: .2, fill: blue)
-})
-// line((4.5,4.5),(4.5,6.4),stroke:2pt,mark:(end:"straight"))
-// line((2.8,4),(1.6,4),stroke:2pt,mark:(end:"straight"))
 }), x: 60%, y:60%, reflow: true),
 caption: [
 Process of solving a factoring problem by Ising machine using `ProblemReductions.jl`.
@@ -190,7 +175,6 @@ Process of solving a factoring problem by Ising machine using `ProblemReductions
 
 
 = Computational hardness and problem reductions
-
 
 
 #align([#figure(scale(canvas(length: 1cm, {
@@ -422,13 +406,15 @@ For constrained optimization problems, quadratic penalties are introduced to sim
     [$z = x_1 and x_2$],[$x_1x_2-2(x_1+x_2)z+3z$],
     [$z = x_1 xor x_2$],[$2x_1x_2-2(x_1+x_2)z-4(x_1+x_2)a+4a z+x_1+x_2+z+4a$]
     ),
-    caption: [QUBO Penalties for Logical Operations @noauthor_reformulating_nodate
-  $ z = not x arrow y = mat(x,z;delim:"[") mat(-1,1;
+    caption: [QUBO Penalties for Logical Operations @noauthor_reformulating_nodate]
+  ) <tbl:qubo>
+]
+
+#align(center)[$ z = not x arrow y = mat(x,z;delim:"[") mat(-1,1;
   1,-1;delim: "[") mat(x;
   z;delim: "[") $
-  QUBO expression of $z= not x$]
-  ) <tbl:qubo>,
-]
+  QUBO expression of $z= not x $]
+
 In @tbl:qubo, all the variables are intended to be binary value and note that in that case, we have $ x_i^2 = x_i $ and thereby we could transform the linear part into quadratic one @glover2022quantum. For each truth assignment of the variables, the penalty would be 0 if the logical operation is satisfied and be larger than 0 otherwise. By checking whether the penalty is 0, we could determine whether the logical operation is satisfied. Given this penalties gadgets, we process by considering a simple conjunction of two gedgets. Given a circuit sat example
 
 #align(center)[
@@ -509,13 +495,6 @@ Factoring(2, 2, 6)
   content((-4.6,1),$6 = p times q$)
   line((-3.5,1),(.5,1),mark:(end:"straight"),stroke:2pt)
   content((2,.9),`Factoring(2,2,6)`,anchor:"south")
-  set-style(stroke: none)
-on-layer(2,{content((-1.5,1.7), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
-on-layer(1,{
-  circle("pkg.north-east", radius: .2, fill: red)
-  circle("pkg.south", radius: .3, fill: green)
-  circle("pkg.north-west", radius: .2, fill: blue)
-})
 }), x: 60%, y:60%, reflow: true)
 #jinguo([This figure contains too many useless information.]) *delete `Initialization`*
 When we initialize an instance, not only `Factoring`, we need to offer some information about the problem. For `Factoring`, we need to provide the number of bits for the factors and the number to be factored. And the outcome would be a `Factoring` instance with these information.
@@ -548,14 +527,7 @@ SpinGlass{HyperGraph, Vector{Int64}}(HyperGraph(90, [[1, 2], [1, 3], [2, 3], [1]
   content((2.5,0.4),`SpinGlass`)
   line((2.5,1.8),(2.5,1.3),mark:(end:"straight"),stroke:1pt,name:"reduce1")
   line((2.5,1),(2.5,0.5),mark:(end:"straight"),stroke:1pt,name:"reduce2")
-  set-style(stroke: none)
-  on-layer(2,{content((-1,2), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
-  on-layer(1,{
-    circle("pkg.north-east", radius: .2, fill: red)
-    circle("pkg.south", radius: .3, fill: green)
-    circle("pkg.north-west", radius: .2, fill: blue)
-  })
-  content((-1,1),"Find reduction path")
+  content((-1,1.6),"Find reduction path")
 }), x: 60%, y:60%, reflow: true)
 The `reduction_graph` function returns a graph, where each vertex represent a `model` and each edge represent a reduction from one model to another. The `reduction_paths` function returns a list of paths from the source model to the target model. Here we get a vector of problems: `[Factoring, CircuitSAT, SpinGlass]`. That means we need to reduce the factoring problem to a circuit satisfaction problem and then to a spin glass problem.  The `implement_reduction_path` function is used for problem reductions and it would return the result of the reduction. It's worth noticing that the reduction result is an instance of `AbstractReductionResult` class, which contains the information of the reduction process, not just single problem instance. The `target_problem` function is used to get the target problem from the reduction result. In this case, the target problem is a `SpinGlass` instance. 
 
@@ -593,7 +565,7 @@ julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
   content((1.6,1.7),text(13pt)[SpinGlass])
   dashed-grid-spin(.5,0,1.5,"grid")
   line((3.2,.7),(7,.7),mark:(end:"straight"),stroke:2pt)
-  content((5,1.3),text(14pt)[Ising Machine])
+  content((5,1),text(14pt)[Ising Machine])
   content((5,.4),`GenericTensorNetworks`)
   curve-box(7.1,-.8,3,"Solution")
   content((8.6,1.5),text(14pt)[Solution])
@@ -602,14 +574,7 @@ julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
   curve-box(14.3,-.8,3,"result")
   content((15.8,1.5),text(14pt)[Result])
   content((15.8,.5),text(12pt)[$110 = 11 times 10$])
-  set-style(stroke: none)
-  on-layer(2,{content((12,1.3), text(10pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
-  on-layer(1,{
-    circle("pkg.north-east", radius: .2, fill: red)
-    circle("pkg.south", radius: .3, fill: green)
-    circle("pkg.north-west", radius: .2, fill: blue)
-  })
-  content((12,.4),`extract_solution`)
+  content((12,1),`extract_solution`)
 }), x: 60%, y:60%, reflow: true)
 The result is $p = 3$ and $q = 2$ which is the correct factors of 6. The code above shows how to reduce a factoring problem to a spin glass problem and solve it using the `GenericTensorNetworks` package. The `GenericTensorNetworks` package is a solver for the Ising machine and it provides a set of solvers for the Ising machine. The `SingleConfigMin` is a solver that finds the minimum energy configuration of the Ising machine. The `extract_solution` function is used to extract the solution from the result of the solver. The solution is then used to find the factors of the input number.
 
@@ -640,11 +605,11 @@ Thank the authors of the package `ProblemReductions.jl`: Jinguo Liu, Chenguang G
 === Activities
 My contribution the the package as _c-allergic_ during the summer vacation:
 -  #link("https://github.com/GiggleLiu/ProblemReductions.jl/graphs/contributors")[Code Contributions]
-#figure(
+#scale(figure(
   image("commits.png",width:100%,),
   caption: "Commits of the package ProblemReductions.jl: totally added 1694 lines of code and deleted 250 lines of code."
 )
-
+)
 === Pull Requests
 
 13 merged pull requests in total.
