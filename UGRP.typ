@@ -142,8 +142,7 @@ Introduce Ising model that is used for optimization problem and conclude that it
   set-origin((-.1,1))
   dashed-grid-spin(.5,0,1.5,"grid")
   set-origin((.1,-1))
-  content((7.5,1.9),"Annealer")
-  content((7.5,1.1),"Tensor Network")
+  content((7.5,1.5),"Execute on an \nIsing machine")
   content((7.5,7),"configuration")
   content((7.5,6.2),$ sigma = {-1,1,dots,1}$)
   line("factoring","spinglass",mark:(end:"straight"),name:"1",stroke:2pt)
@@ -151,7 +150,7 @@ Introduce Ising model that is used for optimization problem and conclude that it
   line("Ising-machine","solution",mark:(end:"straight"),name:"3",stroke:2pt)
   line("solution","factoring",mark:(end:"straight"),name:"4",stroke:2pt)
   set-style(stroke: none)
-  on-layer(2,{content("1.mid", text(6pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
+  on-layer(2,{content((.0,4), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: "pkg")})
   on-layer(1, {
   circle("pkg.north-east", radius: .2, fill: red)
   circle("pkg.south", radius: .3, fill: green)
@@ -168,7 +167,7 @@ on-layer(2,{content((4.5,7), text(6pt,stroke:.2pt)[ProblemReductions.jl], name: 
 }), x: 60%, y:60%, reflow: true),
 caption: [
 Process of solving a factoring problem by Ising machine using `ProblemReductions.jl`.
-(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl. #jinguo(["Annealer tensor network" $arrow.r$ "Execute on an Ising machine", the picture on edge is not clear.])
+(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl. #jinguo(["Annealer tensor network" $arrow.r$ "Execute on an Ising machine", the picture on edge is not clear.]) *Solved*
 ]
 ))
 
@@ -331,41 +330,48 @@ the graphical representation of its vertical calculation and array multiplier is
     rect: (fill: none,stroke:(dash: "dashed")),
   )
   rect((7.7,4.8),(9.3,6.2),name:"blackbox")
-  rect((-.5,1),(rel:(5.9,5)),name:"design")
+  rect((-.5,1),(rel:(6,5)),name:"design")
   line((name:"blackbox",anchor:135deg),(name:"design",anchor:45deg))
   line((name:"blackbox",anchor:227deg),(name:"design",anchor:315deg))
   
-  andgate(3.5,4.3,0.7,"and1")
-  content((3.5+0.2*0.7,4.3+1.8*0.7),$p_2$,anchor:"south")
-  content((3.5+0.8*0.7,4.3+1.8*0.7),$q_1$,anchor:"south")
-  content((3.5+0.5*0.7,4.3-0.5),$p_2 q_1$,anchor:"south")
-  
-  rect((1.5,2),(rel:(1.618*1.2,1.2)),name:"fulladder",stroke:1pt)
-  content((1.5+0.48*1.618*1.2,2+1.2*0.4)," Full Adder",anchor:"south")
+  rect((1.3,2.3),(rel:(2.5,2.5)),name:"box",stroke:1pt)
+  //content
+  andgate(2.8,3.7,.3,"and") 
+  rect((1.9,2.6),(rel:(1.6,.8)),name:"FA1",stroke: 1pt)
+  content((2.7,3),text(8pt)[Full Adder])
+  // io
+  line((4.4,4.3),(.5,4.3),stroke:1pt,mark:(end:"straight"))
+  line((name:"box",anchor:90deg),(2.55,5.5),stroke:1pt)
+  line((),(2.55,3.6),(1.7,3.6),stroke:1pt)
+  line((),(1.7,2.45),(2.56,2.45),stroke:1pt)
+  line((name:"box",anchor:270deg),(2.55,2.45),(2.55,1.5),stroke:1pt,mark:(end:"straight"))
+  line((name:"FA1",anchor:315deg),(4.5,1.7),stroke:1pt,name:"sum-out",mark:(end:"straight"))
+  line((.7,5.4),(2.1,4),(2.1,3.4),stroke:1pt,name:"sum-in")
+  line(pin("FA1","rt"),(4.4,3.15),stroke:1pt,name:"cin")
+  line(pin("FA1","lt"),(.5,3.15),stroke:1pt,name:"cout",mark:(end:"straight"))
+  line((2.95,3.4),(2.95,3.7),stroke:1pt)
+  line((3.04,4),(3.04,4.3),stroke:1pt)
+  circle((3.04,4.3),radius:.06,fill:black)
+  line((2.55,4.15),(2.87,4.15),stroke:1pt)
+  circle((2.55,4.15),radius:.06,fill:black)
 
-  line((3.4,4.3-0.5),(3,4.3-0.5),(name:"fulladder",anchor:61deg),stroke:1pt)
-  line((1.4,4.5),(2.1,3.8),(name:"fulladder",anchor:110deg),stroke:1pt)
-  line((4,2.6),"fulladder.east",stroke:1pt)
-  line("fulladder.west",(1,2.6),stroke:1pt)
-  line("fulladder.south",(2.47,1.5),stroke:1pt)
-  
-  content((1.4,4.6),"sum-in",anchor:"south-east")
-  content((4.1,2.65),"carry-in", anchor: "west")
-  content((1,2.65),"carry-out", anchor: "east")
-  content((2.47,1.3),"sum-out")
-  content((2.5,0.7),"(c) design of blackbox",anchor:"north")
-  //blackbox((0,0),0.5,"a")
-  //brace((1.2,-2),(1.2,2.5),name:"brace")
-  //content((1.3,-1.6),"nihao",anchor:"west")
-}), x: 60%, y:60%, reflow: true),
+  //bits io
+  content((.5,5.7),$s_(i+1,j-1)$)
+  content((4.7,1.6),$s_(i,j)$)
+  content((4.9,3.2),$c_(i-1,j)$)
+  content((0.2,3.2),$c_(i,j)$)
+  content((2.55,5.8),$p_i$)
+  content((2.55,1.4),$p_i$)
+  content((4.6,4.4),$q_j$)
+  content((.2,4.4),$q_j$)
+}), x: 65%, y:65%, reflow: true),
 caption: [
   (a) The multiplication of 3-bits binary numbers. The vertical calculation of 7 times 5 is shown.
   (b) The array multiplier @nguyen2023quantum circuit to implement the vertical calculation in (a).
   The black boxes are the building blocks, and lines are variables. The variables on the thick line are the input variables.
   Each horizontal layer represents multiplying one bit of multiplicand with every bit of multiplier to obtain the partial product.
   The partial products are then added to obtain the final product.
-  (c) The building block of array multiplier (@blackbox). Each building block is composed of an AND gate and a full adder.
-  #jinguo([The lines are not arranged properly.])
+  (c) The building block of array multiplier (@blackbox). Each building block is composed of an AND gate and a full adder. #text(red)[Whether put $p_i$ here or $p_2$]
   //The four inputs of blackbox are respectively: one bit of mulpicand and one bit of multiplier, the carry-in and sum-in. Outputs are the carry-out and sum-out.
 ]
 ) <fig:multiplier>])
@@ -384,8 +390,9 @@ A boolean circuit is a directed graph with input nodes and one or more output no
 #jinguo([First introduce an concept ("What"), then explain "Why" and then "How". You usually starts with "How"...])
 
 Firstly, we give a formal definition of the Quadratic Unconstrained Binary Optimization (QUBO) model. Definition: The QUBO model is expressed by the optimization problem:
-$ "QUBO: minimize/maximize" y=x^t Q x $ where x is a vector of binary decision variables and Q is a square matrix of constants.
-For constrained optimization problems, quadratic penalties are introduced to simulate the constraints so that the constraints problems could be re-formulated into QUBO problems effectively @glover2022quantum. As an example, we consider the logical operations and their corresponding QUBO penalties in Table 1.
+$ "QUBO: minimize/maximize" y=x^t Q x $ where $x$ is a vector of binary decision variables and $Q$ is a square matrix of constants. It is worth noticing that the there are distinct differences between QUBO and Circuit SAT since, firstly, the former is a optimization problem and the latter is a decision problem and secondly, QUBO is unconstrained and Circuit SAT is constrained. However, by constructing $Q$ properly, one could implicitly introduce the constraints into the QUBO model.
+
+For constrained optimization problems, quadratic penalties are introduced to simulate the constraints so that the constraints problems could be re-formulated into QUBO problems effectively @glover2022quantum. As an example, we consider the logical operations that are common in Circuit SAT and their corresponding QUBO penalties in Table 1.
 
 #align(center)[
   #figure(table(
@@ -492,9 +499,8 @@ on-layer(1,{
   circle("pkg.south", radius: .3, fill: green)
   circle("pkg.north-west", radius: .2, fill: blue)
 })
-content((-1.5,0.7),"Initialization")
 }), x: 60%, y:60%, reflow: true)
-#jinguo([This figure contains too many useless information.])
+#jinguo([This figure contains too many useless information.]) *delete `Initialization`*
 When we initialize an instance, not only `Factoring`, we need to offer some information about the problem. For `Factoring`, we need to provide the number of bits for the factors and the number to be factored. And the outcome would be a `Factoring` instance with these information.
 
 The next thing is to find out how to reduce the factoring to spin glass.
