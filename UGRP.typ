@@ -17,11 +17,7 @@
 )
 #show raw.where(block: true): set text(size: 0.8em)
 
-
 #set math.equation(numbering: "(1)")
-#align(center)[
-  *Abstract*\
-]
 
 #show: codly-init.with()
 
@@ -117,11 +113,14 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
 #let curve-box(x,y,size,name) = {
   draw.rect((x,y),(rel:(size,size)),radius: 30%,name:name)
 }
+#show link: set text(blue)
 
+#align(center)[
+  *Abstract*
+]
+This project investigates the use of Ising machines to tackle the prime factorization problem, essential for the security of RSA encryption systems. We develop the `ProblemReductions.jl` package to reduce complex problems into Ising models, enabling efficient solutions through Ising machines.
 
-= Introduction: Encryption system and the factoring problem
-
-// Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
+= Introduction: Ising machine and the factoring problem
 
 Ising machines are powerful hardware solvers that are used to find out the optimal solutions for Spin Glass problems. People have employed multiple kinds of algorithm, like Simulated Annealing and Tensor Networks, to realize Ising machine @mohseni2022ising. For example, @Ising (a) shows a Boltzmann machine and @Ising (b) shows a commercial quantum annealing Ising machine from D-Wave Systems Inc. With an Ising machine, people could solve Spin Glass problems much faster than traditional computers with von-Neuman architecture.
 
@@ -130,7 +129,7 @@ Ising machines are powerful hardware solvers that are used to find out the optim
   caption:[(a) A Boltzmann machine@kiraly2021atomic.  (b)Quantum Annealing Ising machine from D-Wave Systems Inc@D-waveIsingmachine.]
 )<Ising>
 
-Ising machines' being able to solve Spin Glass problems is not that powerful in the context that many algorithms could only solve a single type of problem and when nuanced differences are introduced, the algorithm does not work well. However, in the context of computational complexity, people only care about complexity class of problems such as P, NP, and NP-complete problems class shown in @fig-problem-reductions. The P problems are the problems that could be solved in polynomial time, the NP problems are the problems that could be verified in polynomial time, and the NP-complete problems, where Spin Glass problem belongs to, are the hardest problems in NP. The basic principle of problem reduction is that if a problem A could be reduced to problem B, then problem B is at least as hard as problem A so that problems of same complexity class can be reduced to one another in the time polynomial to the problem size. Therefore, since many optimization problemms are in NP-compete, it is possible to formulate any NP problem into a Spin Glass problem @lucas2014ising and that is where the Ising machine comes in handy.
+The ability of Ising machines to solve Spin Glass problems is not that powerful in the context that many algorithms could only solve a single type of problem and when nuanced differences are introduced, the algorithm does not work well. However, in the context of computational complexity, people only care about complexity class of problems such as P, NP, and NP-complete problems class shown in @fig-problem-reductions. The P problems are the problems that could be solved in polynomial time, the NP problems are the problems that could be verified in polynomial time, and the NP-complete problems, where Spin Glass problem belongs to, are the hardest problems in NP. The basic principle of problem reduction is that if a problem A could be reduced to problem B, then problem B is at least as hard as problem A so that problems of same complexity class can be reduced to one another in the time polynomial to the problem size @moore2011nature. Therefore, since many optimization problemms are in NP-complete, it is possible to formulate any NP problem into a Spin Glass problem @lucas2014ising and that is where the Ising machine comes in handy.
 
 #figure(scale(canvas(length: 1cm, {
   import draw: *
@@ -158,11 +157,11 @@ Ising machines' being able to solve Spin Glass problems is not that powerful in 
   content((7,-0.2),"(b)",anchor: "north")
 }), x: 70%, y:70%, reflow: true),
 caption: [
-  (a) A possibe diagram of P, NP, and NP-complete problems @garey1979computers and their relation. The circles represent the classes of problems. The arrow represents the reduction from one kind of problem to another. 
+  (a) A possibe diagram of P, NP, and NP-complete problems @garey1979computers and their reduction relations. The circles represent the classes of problems. The arrow represents the reduction from one kind of problem to another. 
  (b) Several Problems in the package `ProblemReductions.jl`. 
 ] ) <fig-problem-reductions>
 
-Among these problems, the factoring problem is one of the most important problems in number theory and cryptography such as RSA system @rivest1978method@aggarwal2009breaking. It is in NP-intermediate as shown in @fig-problem-reductions, which means it is neither in P nor in NP-complete. Solving the factoring problem could lead to breakthroughs in analyzing the vulnerabilities of the RSA system. And up to now, people have developed many ways to solve the factoring problem, for example, reducing it to the closest lattice vector problem then use SVP(Shortest Vector Problem) algorithm to solve it @micciancio2001hardness, and using a primitive method --- encoding it into an array multiplier, both of which could be reduced to the Ising model. 
+Among these problems, the factoring problem is one of the most important problems in number theory and cryptography such as RSA system @rivest1978method@aggarwal2009breaking. It is in NP-intermediate as shown in @fig-problem-reductions, which means it is neither in P nor in NP-complete. Solving the factoring problem could lead to breakthroughs in analyzing the vulnerabilities of the RSA system. And up to now, people have developed many ways to solve the factoring problem, for example, reducing it to the closest lattice vector problem then use _Shortest Vector Problem_(SVP) algorithm to solve it @schnorr2021fast, and using a primitive method --- encoding it into an array multiplier @nguyen2023quantum, both of which could be reduced to the Ising model. 
 
 Unfortunately, although there are already many well-established reductions for NP problems @lucas2014ising, we don't have a clear and usable way to reduce factoring to Ising model. This motivates the development of our package, `ProblemReductions.jl`, which not only provides a practical way to bridge this gap, enabling us to leverage the power of Ising machines for factoring problems, but also build up the reduction framework of NP problem. In this article, we aim to demonstrate the process of solving a factoring problem using an Ising machine with the assistance of ProblemReductions.jl, as depicted in @mainfigure. Since we do not have access to actual hardware, we employ the `GenericTensorNetworks` package instead, which provides a software-based Ising machine solver.
 #figure(scale(canvas(length: 1.1cm, {
@@ -179,7 +178,7 @@ Unfortunately, although there are already many well-established reductions for N
   set-origin((-.1,1))
   dashed-grid-spin(.5,0,1.5,"grid")
   set-origin((.1,-1))
-  content((7.5,1.5), [#image("Ising.png", width:3cm)])
+  content((7.5,1.5), [#image("Ising.png", width:3cm,height:1.2cm)])
   content((7.5,7),"configuration")
   content((7.5,6.2),$ sigma = {-1,1,dots,1}$)
   line("factoring","spinglass",mark:(end:"straight"),name:"1",stroke:2pt)
@@ -191,18 +190,18 @@ Unfortunately, although there are already many well-established reductions for N
 }), x: 70%, y:70%, reflow: true),
 caption: [
 Process of solving a factoring problem by Ising machine using `ProblemReductions.jl`.
-(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding spin glass problem. (c) The Ising machine is used to solve the spin glass problem. (d) The solution of the spin glass problem is then extracted back to the solution of the factoring problem using ProblemReductions.jl. 
+(a) Factoring problem needed to solve. (b) Through `ProblemReductions.jl`, we reduce the factoring problem to a corresponding Spin Glass problem. (c) The Ising machine is used to solve the Spin Glass problem. (d) Extract the solution to the factoring problem through `ProblemReductions.jl`.
 ]
 )<mainfigure>
 
 
 = From factoring to Ising machine
 == Factoring problem
-Factoring, a problem of decomposing an $n$-bit composite integer $m=p q$ into its prime factors $p$ and $q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
+_Factoring_, a problem of decomposing an $n$-bit composite integer $m=p q$ into its prime factors $p$ and $q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
 
 == Factoring $arrow$ Circuit Satisfaction
 
-The factoring problem can be reduced to the Circuit Satisfaction (Circuit SAT) problem.
+The factoring problem can be reduced to the _Circuit Satisfaction_(Circuit SAT) problem.
 Circuit SAT is a problem of determining whether a given boolean circuit has a satisfying assignment. Hence, factoring is the problem of finding the satisfying assignment of the integer multiplication circuit.
 In computer science, the multiplication of two integers is often implemented using an _array multiplier_ as shown in @fig:multiplier.
 The basic idea of the array multiplier is to multiply each bit of the multiplicand with every bit of the multiplier and then add the partial products to obtain the final product @asha2016performance.
@@ -355,10 +354,7 @@ the graphical representation of its vertical calculation and array multiplier is
 }), x: 70%, y:70%, reflow: true),
 caption: [
   (a) The multiplication of 3-bits binary numbers. The vertical calculation of 7 times 5 is shown.
-  (b) The array multiplier @nguyen2023quantum circuit to implement the vertical calculation in (a).
-  The black boxes are the building blocks, and lines are variables. The variables on the thick line are the input variables.
-  Each horizontal layer represents multiplying one bit of multiplicand with every bit of multiplier to obtain the partial product.
-  The partial products are then added to obtain the final product.
+  (b) The array multiplier @nguyen2023quantum. It multiplies each bit of the multiplicand with the multiplier bits to generate partial products, which are then summed for the final product.
   (c) The building block of array multiplier (@blackbox). Each building block is composed of an AND gate and a full adder. 
   //The four inputs of blackbox are respectively: one bit of mulpicand and one bit of multiplier, the carry-in and sum-in. Outputs are the carry-out and sum-out.
 ]
@@ -372,11 +368,11 @@ c_(-1,j) = s_(i,-1) = 0 $  <blackbox>
 
 for $i,j in {0,1,dots,n}$, let $c_(i j)$ and $s_(i j)$ represent the carry-out and sum-out, $p_i$ and $q_j$ denote the $i$th bit of the multiplicand and the $j$th bit of the multiplier, and $c_(i-1,j)$ and $s_(i,j-1)$ refer to carry-in and sum-in, where $i-1$ and $j-1$ simply indicates that each blackbox receives carry-out from the last blackbox in the same row, and sum-out from the  upper-left blackbox(which, in vertical calculation corresponds to the previous column) @nguyen2023quantum.
 
-A boolean circuit is a directed graph with input nodes and one or more output node. The internal nodes, known as "gate", produce logical function of inputs. One could devide a circuit into a series of layers of gates and the gates from each layer receive inputs from the layer above them @moore2011nature. Based on this "layer" design, we could reduce factoring to circuit sat simply by pushing all the constraints in the blackbox to certain layers in the circuit. 
+A boolean circuit is a directed graph with input nodes and one or more output node. The internal nodes, known as "gate", produce logical function of inputs. One could devide a circuit into a series of layers of gates and the gates from each layer receive inputs from the layer above them @moore2011nature. Based on this "layer" design, we could reduce factoring to Circuit SAT simply by pushing all the constraints in the blackbox to certain layers in the circuit. 
 
 == Circuit Satisfaction $arrow$ QUBO
 
-Firstly, we give a formal definition of the Quadratic Unconstrained Binary Optimization (QUBO) model. Definition: The QUBO model is expressed by the optimization problem:
+Firstly, we give a formal definition of the _Quadratic Unconstrained Binary Optimization_ (QUBO) model. Definition: The QUBO model is expressed by the optimization problem:
 $ "QUBO: minimize/maximize" y=x^t Q x $ where $x$ is a vector of binary decision variables and $Q$ is a square matrix of constants. It is worth noticing that the there are distinct differences between QUBO and Circuit SAT since, firstly, the former is a optimization problem and the latter is a decision problem and secondly, QUBO is unconstrained and Circuit SAT is constrained. However, by constructing $Q$ properly, one could implicitly introduce the constraints into the QUBO model.
 
 For constrained optimization problems, quadratic penalties are introduced to simulate the constraints so that the constraints problems could be re-formulated into QUBO problems effectively @glover2022quantum. As an example, we consider the logical operations that are common in Circuit SAT and their corresponding QUBO penalties in Table 1.
@@ -393,13 +389,13 @@ For constrained optimization problems, quadratic penalties are introduced to sim
     [$z = x_1 xor x_2$],[$2x_1x_2-2(x_1+x_2)z-4(x_1+x_2)a+4a z+x_1+x_2+z+4a$]
     ),
     caption: [QUBO Penalties for Logical Operations @noauthor_reformulating_nodate]
-  ) <tbl:qubo>,
+  ) <tbl:qubo>
 ]
 In @tbl:qubo, all the variables are intended to be binary value and note that in that case, we have $ x_i^2 = x_i $ and thereby we could transform the linear part into quadratic one @glover2022quantum. For example, for the NOT operation, we could obtain its QUBO expression as follows:
 $ z = not x arrow y = 2x z -x^2 - z^2+1 arrow y = mat(x,z;delim:"[") mat(-1,1;
   1,-1;delim: "[") mat(x;
   z;delim: "[") $
- For each truth assignment of the variables, the penalty would be 0 if the logical operation is satisfied and be larger than 0 otherwise. By checking whether the penalty is 0, we could determine whether the logical operation is satisfied. Given this penalties gadgets, we process by considering a simple conjunction of two gedgets. Given a circuit sat example
+ For each truth assignment of the variables, the penalty would be 0 if the logical operation is satisfied and be larger than 0 otherwise. By checking whether the penalty is 0, we could determine whether the logical operation is satisfied. Given this penalties gadgets, we process by considering a simple conjunction of two gedgets. Given a Circuit SAT example
 
 #align(center)[
   #canvas(length: 0.8cm,{  
@@ -424,16 +420,16 @@ $ z = not x arrow y = 2x z -x^2 - z^2+1 arrow y = mat(x,z;delim:"[") mat(-1,1;
 ]
 In (a), there is a simple conjuction of an AND gate and an OR gate. The output of them, $y_1$ and $y_2$, is then connected to the AND gate in the next layer as inputs. The conjuction of the two gates in the first layer is given by:
 $ z = y_1y_2 -2(y_1+y_2)z+3z $ <conjunction>
-So by simply change the literals in the QUBO penalty, we could simulate the conjuction of two gadgets and therby the circuit sat problem. The whole reduction of (a), from circuit sat to QUBO, is given by:
+So by simply change the literals in the QUBO penalty, we could simulate the conjuction of two gadgets and therby the Circuit SAT problem. The whole reduction of (a), from Circuit SAT to QUBO, is given by:
 $ y_1 = x_1x_2-2(x_1+x_2)y_1+3y_1 $   $ y_2 = x_1 x_2 + (x_1 + x_2)(1-2y_2)+ y_2 $  #align(center)[and @conjunction]
 
  
 
-== QUBO $arrow$ Spin glass and Ising machine
+== QUBO $arrow$ Spin Glass and Ising machine
 
-=== Reduction from QUBO to Spin glass
+=== Reduction from QUBO to Spin Glass
 
-The problem of spin glasses is of great interest both in solid state physics and in statistical physics. Simply speaking, in a spin glass system, there are many spins that interact with each other and the onsite energy, such as magnetic field. In spin glss, there is an energy interaction between spins: 
+_Spin Glass_ problem is of great interest both in solid state physics and in statistical physics. Simply speaking, in a Spin Glass system, there are many spins that interact with each other and the onsite energy, such as magnetic field. In spin glss, there is an energy interaction between spins: 
 $H_12 = J_12 sigma_1 sigma_2$,
 where $sigma_1$ and $sigma_2$ are the spins and $J_12$ is the interaction @barahona1982computational. For a configuration $sigma ={sigma_1,sigma_2,...,sigma_n},  $ where $sigma_i = {+1,-1}$, the energy of the configuration is given by the Hamiltonian
 
@@ -445,25 +441,28 @@ $min y = mat(x_1,x_2;delim:"[") mat(-1,1;
   1,-1;delim: "[") mat(x_1;
   x_2;delim: "[")$, which is the QUBO penalty of $x_2 = not x_1$. We substitute $x_i = (1-2sigma_i)/2$ into the penalty and we have: $ y = mat((1-sigma_1)/2,(1-sigma_2)/2;delim:"[") mat(-1,1;
   1,-1;delim: "[") mat((1-sigma_1)/2;
-  (1-sigma_2)/2;delim: "[") arrow y = -1/4 sigma_1^2 -1/4 sigma_2^2 + 1/2sigma_1sigma_2. $ Note that $sigma_i in {-1,1}$, so the square terms are actually constants. Therefore, we could simplify it and obtain the Hamiltonian of the target spin glass problem as: 
-  $ H = 1/2 sigma_1 sigma_2. $ We could verify its correctness by comparing the solution of both problems. For QUBO, the solution is $x_1 = 1, x_2 = 0$ and for the spin glass, the solution is $sigma_1 = -1, sigma_2 = 1$. Through the conversion, we could see that the two solutions are consistent.
+  (1-sigma_2)/2;delim: "[") arrow y = -1/4 sigma_1^2 -1/4 sigma_2^2 + 1/2sigma_1sigma_2. $ Note that $sigma_i in {-1,1}$, so the square terms are actually constants. Therefore, we could simplify it and obtain the Hamiltonian of the target Spin Glass problem as: 
+  $ H = 1/2 sigma_1 sigma_2. $ We could verify its correctness by comparing the solution of both problems. For QUBO, the solution is $x_1 = 1, x_2 = 0$ and for the Spin Glass, the solution is $sigma_1 = -1, sigma_2 = 1$. Through the conversion, we could see that the two solutions are consistent.
 
 === Ising machine
 
-Ising model is actually a simplified version of spin glass model. The spins in Ising model would assumes one of the two values, +1 or -1, to settle themselves in the lowest energy state with numerous alternatives in the process.The Ising machine is designed to mimic this process and find the optimal solutions for the model. Many algorithms are used to realize the Ising machine, such as simulated annealing, quantum annealing, and tensor network. 
+Ising model is actually a simplified version of Spin Glass model. The spins in Ising model would assumes one of the two values, +1 or -1, to settle themselves in the lowest energy state with numerous alternatives in the process.The Ising machine is designed to mimic this process and find the optimal solutions for the model. Many algorithms are used to realize the Ising machine, such as simulated annealing, quantum annealing, and tensor network. 
 
 In a nutshell, Ising machine is a powerful tool for Ising model. After the whole reduction process, Ising machine could help us obtain a solution of target problem and through extracting the solution, we could get the solution for factoring.
 
+= Code Implementation
 == Julia programming language
 
 Julia is a modern, open-source, high performance programming language for technical computing. It was born in 2012 in MIT. Though Julia is new, it has a large number of packages and a strong and fresh community(JuliaHub Inc).
 
-Julia is fast. Its feature of Just-In-Time compilation and its types system keep it from typical compilation and execution uncertainties @luo2020yao. At the same time, multiple dispatch feature allows the package based on Julia to be more flexible and extensible, which is not only important for the open-source community but also fit for requirements of the field of optimization problems.
+Julia is fast. Its feature of Just-In-Time compilation and its types system keep it from typical compilation and execution uncertainties @bezanson2017julia. At the same time, multiple dispatch feature allows the package based on Julia to be more flexible and extensible, which is not only important for the open-source community but also fit for requirements of the field of optimization problems.
 
-See Appendix @Julia for more details of Julia.
+For more information, refer to following links:
+- Official website: #link("https://julialang.org/")[JuliaLang]
+- Julia Introduction: #link("https://benlauwens.github.io/ThinkJulia.jl/latest/book.html")[ThinkJulia.jl], #link("https://book.jinguo-group.science/stable/")[Scientific Computing for Physicists]
 == ProblemReductions.jl
 
-In this section, we will introduce how to use `ProblemReductions.jl`(See Appendix @ProblemReductions.jl). The main function of the package is problem reduction. It defines a set of computational hard problem(`models`) and provides feasible interface(`reduction_graph` and `reduceto`)  to reduce one to another. Here is an example of reduce a factoring problem to a spin glass problem through the package.
+In this section, we will introduce how to use `ProblemReductions.jl`. The main function of the package is problem reduction. It defines a set of computational hard problem(`models`) and provides feasible interface(`reduction_graph` and `reduceto`)  to reduce one to another. Here is an example of reduce a factoring problem to a Spin Glass problem through the package.
 
 Consider factoring problem: $6 = p times q$, note that in the package, the parameters for factoring problem is `m`, `n` and `input` where `m` and `n` is the number of bits for the factors and `input` is the number to be factored. Open a Julia REPL and run the following code:
 
@@ -483,7 +482,7 @@ Factoring(2, 2, 6)
 
 When we initialize an instance, not only `Factoring`, we need to offer some information about the problem. For `Factoring`, we need to provide the number of bits for the factors and the number to be factored. And the outcome would be a `Factoring` instance with these information.
 
-The next thing is to find out how to reduce the factoring to spin glass.
+The next thing is to find out how to reduce the factoring to Spin Glass.
 ```julia
 julia> g = reduction_graph(); # get the reduction graph
 
@@ -513,7 +512,7 @@ SpinGlass{HyperGraph, Vector{Int64}}(HyperGraph(90, [[1, 2], [1, 3], [2, 3], [1]
   line((2.5,1),(2.5,0.5),mark:(end:"straight"),stroke:1pt,name:"reduce2")
   content((-1,1.6),text(10pt)[Find Reduction path])
 }), x: 60%, y:60%, reflow: true)
-The `reduction_graph` function returns a graph, where each vertex represent a `model` and each edge represent a reduction from one model to another. The `reduction_paths` function returns a list of paths from the source model to the target model. Here we get a vector of problems: `[Factoring, CircuitSAT, SpinGlass]`. That means we need to reduce the factoring problem to a circuit satisfaction problem and then to a spin glass problem.  The `implement_reduction_path` function is used for problem reductions and it would return the result of the reduction. It's worth noticing that the reduction result is an instance of `AbstractReductionResult` class, which contains the information of the reduction process, not just single problem instance. The `target_problem` function is used to get the target problem from the reduction result. In this case, the target problem is a `SpinGlass` instance. 
+The `reduction_graph` function returns a graph, where each vertex represent a `model` and each edge represent a reduction from one model to another. The `reduction_paths` function returns a list of paths from the source model to the target model. Here we get a vector of problems: `[Factoring, CircuitSAT, SpinGlass]`. That means we need to reduce the factoring problem to a circuit satisfaction problem and then to a Spin Glass problem.  The `implement_reduction_path` function is used for problem reductions and it would return the result of the reduction. It's worth noticing that the reduction result is an instance of `AbstractReductionResult` class, which contains the information of the reduction process, not just single problem instance. The `target_problem` function is used to get the target problem from the reduction result. In this case, the target problem is a `SpinGlass` instance. 
 
 So the basic programs to implement the problem reduction using `ProblemReductions.jl` are as follows: 
 - Initialize the source problem and offer the priori known information.
@@ -560,39 +559,37 @@ julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
   content((15.8,.5),text(12pt)[$110 = 11 times 10$])
   content((12,1.1),`extract_solution`)
 }), x: 60%, y:60%, reflow: true)
-The result is $p = 3$ and $q = 2$ which is the correct factors of 6. The code above shows how to reduce a factoring problem to a spin glass problem and solve it using the `GenericTensorNetworks` package. The `GenericTensorNetworks` package is a solver for the Ising machine and it provides a set of solvers for the Ising machine. The `SingleConfigMin` is a solver that finds the minimum energy configuration of the Ising machine. The `extract_solution` function is used to extract the solution from the result of the solver. The solution is then used to find the factors of the input number.
+The result is $p = 3$ and $q = 2$ which is the correct factors of 6. The code above shows how to reduce a factoring problem to a Spin Glass problem and solve it using the `GenericTensorNetworks` package. The `GenericTensorNetworks` package is a solver for the Ising machine and it provides a set of solvers for the Ising machine. The `SingleConfigMin` is a solver that finds the minimum energy configuration of the Ising machine. The `extract_solution` function is used to extract the solution from the result of the solver. The solution is then used to find the factors of the input number.
 
 
 = CONCLUSIONS AND OUTLOOK
 
-Conclude the work and try to find the shortcomings: not complete reduction graph would lead to bad reduction complexity(bad scalability); existing solver `BruteForce` is bad, we need a better solvers tha may simulate the Ising machine in order to realize this idea.
+In this work, we have presented an efficient reduction framework to solve the factoring problem using Ising machines, with ProblemReductions.jl serving as the core tool for problem transformation. The process leverages the power of tensor networks and other optimization techniques to tackle Spin Glass problems, which can be embedded into hardware solutions. Although the reductions demonstrated are practical and adaptable, there are still limitations. For instance, the scalability of the reduction graph, leave room for improvement.
+
+Looking forward, several directions could be explored. Firstly, for the package, the `reduction graph` could be extended to increase the robustness of the reduction system.In terms of the reduction complexity, the reduction paths and rules could be optimized to reduce the size of intermediate elements. What's more, better Ising machine solver could be employed to improve the efficiency of the solution. 
 
 = Acknowledgements
 
 
-Thank the authors of the package `ProblemReductions.jl`: Jinguo Liu, Chenguang Guan, and Huaiming Yu for their contributions to the package. Thank Huanhai Zhou for advices on the report writing. We acknowledge the funding support provided by Research Department of HKUST(GZ) through UGRP program.
+Thank the authors of the package `ProblemReductions.jl`: Jin-guo Liu, Chen-guang Guan, and Huaiming Yu for their contributions to the package. Thank Huanhai Zhou for advices on the report writing. We acknowledge the funding support provided by Research Department of HKUST(GZ) through UGRP program.
 
 = Appendix
+#set par(
+  first-line-indent: 0em
+)
 
-== Julia <Julia>
+== My Contributions to the `ProblemReductions.jl`
 
-- Official website: #link("https://julialang.org/")[JuliaLang]
-
-- Julia Introduction: #link("https://benlauwens.github.io/ThinkJulia.jl/latest/book.html")[ThinkJulia.jl], #link("https://book.jinguo-group.science/stable/")[Scientific Computing for Physicists]
-
-== Package Website <ProblemReductions.jl>
-
-- #link("https://github.com/GiggleLiu/ProblemReductions.jl")[ProblemReductions.jl]
-
-== My Contributions to the Package
+=== GitHub repository
+#link("https://github.com/GiggleLiu/ProblemReductions.jl")[ProblemReductions.jl]
 
 === Activities
-My contribution the the package as _c-allergic_ during the summer vacation:
+My contribution the the package as #link("https://github.com/c-allergic")[_c-allergic_] during the summer vacation:
 -  #link("https://github.com/GiggleLiu/ProblemReductions.jl/graphs/contributors")[Code Contributions]
-#figure(
+#align(center)[#scale(figure(
   image("commits.png",width:100%,),
   caption: "Commits of the package ProblemReductions.jl: totally added 1694 lines of code and deleted 250 lines of code."
-)
+),x:80%,y:80%,reflow:true)]
 
 === Pull Requests
 
@@ -612,5 +609,4 @@ My contribution the the package as _c-allergic_ during the summer vacation:
 - #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/42")[New: MaxCut model]
 - #link("https://github.com/GiggleLiu/ProblemReductions.jl/pull/39")[Set covering]
 
-
-
+#pagebreak()
