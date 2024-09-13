@@ -123,10 +123,7 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
 
 // Introduce Ising model that is used for optimization problem and conclude that it could lead to breakthroughs in analyze the vuneralbilities of RSA system since it's based on the hardness of factoring problem. Then conclude that reduce other problems into optimization problem is important since that we could then use ising machine to deal with that problem. So we develop a Julia package to help reduce problems of different types into your target problem
 
-
-
 Ising machines are powerful hardware solvers that are used to find out the optimal solutions for Spin Glass problems. People have employed multiple kinds of algorithm, like Simulated Annealing and Tensor Networks, to realize Ising machine @mohseni2022ising. For example, @Ising (a) shows a Boltzmann machine and @Ising (b) shows a commercial quantum annealing Ising machine from D-Wave Systems Inc. With an Ising machine, people could solve Spin Glass problems much faster than traditional computers with von-Neuman architecture.
-
 
 #figure(
   image("Ising.png"),
