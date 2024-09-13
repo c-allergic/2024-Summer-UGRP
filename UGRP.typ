@@ -179,7 +179,7 @@ Unfortunately, although there are already many well-established reductions for N
   set-origin((-.1,1))
   dashed-grid-spin(.5,0,1.5,"grid")
   set-origin((.1,-1))
-  content((7.5,1.5),"Execute on an \nIsing machine")
+  content((7.5,1.5), [#image("Ising.png", width:3cm)])
   content((7.5,7),"configuration")
   content((7.5,6.2),$ sigma = {-1,1,dots,1}$)
   line("factoring","spinglass",mark:(end:"straight"),name:"1",stroke:2pt)
