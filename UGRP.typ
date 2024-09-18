@@ -118,7 +118,7 @@ draw.line((name:name,anchor:"south"),(x + 0.5*size,y - 0.5 * size),stroke:1pt) /
 #align(center)[
   *Abstract*
 ]
-This project investigates the use of Ising machines to tackle the prime factorization problem, essential for the security of RSA encryption systems. We develop the `ProblemReductions.jl` package to reduce complex problems into Ising models, enabling efficient solutions through Ising machines.
+This project investigates the use of Ising machines to tackle the prime factorization problem, essential for the security of RSA encryption systems. We develop the `ProblemReductions.jl` package to reduce complex problems into Ising models, enabling efficient solutions through Ising machines. We demonstrate the process of solving the factoring problem using an Ising machine with the assistance of `ProblemReductions.jl`. This work provides a practical way to leverage the power of Ising machines for factoring problems and builds a reduction framework for NP problems.
 
 = Introduction: Ising machine and the factoring problem
 
@@ -197,7 +197,7 @@ Process of solving a factoring problem by Ising machine using `ProblemReductions
 
 = From factoring to Ising machine
 == Factoring problem
-_Factoring_, a problem of decomposing an $n$-bit composite integer $m=p q$ into its prime factors $p$ and $q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
+_Factoring_, a problem of decomposing an $n$-bit composite integer $m$ into its prime factors $p$ and $q$, is denoted as $m = p times q$. To specify it, we use the binary representation for the integer $m= sum_(i=0)^(n-1) 2^i m_i $, with $m_i ∈ {0, 1}$, $p=sum_(i=0)^(k-1)2^i p_i$ for the $k$-bit integer, and $q=sum_(i=0)^(n-k-1)2^i q_i$ for the $(n-k)$-bit integer. The factoring problem thus amounts to finding the unknown bits $p_i$ and $q_i$ such that $ sum_(i=0)^(n-1)2^i m_i = sum_(i=0)^(k-1) sum_(j=0)^(n-k-1)2^(i+j)p_i q_j. $ Note that k is a priori unknown since we just want to consider this specific problem. However, one could consider this problem for any $k=1,2,...,n/2$ @nguyen2023quantum.
 
 == Factoring $arrow$ Circuit Satisfaction
 
@@ -530,9 +530,9 @@ julia> gtn_problem = GenericTensorNetworks.SpinGlass(
                 )
 
 julia> result = GenericTensorNetworks.solve(
-                  GenericTensorNetwork(gtn_problem),
-                  SingleConfigMin()
-                )[]
+                         GenericTensorNetwork(gtn_problem),
+                         SingleConfigMin()
+                       )[]
 (-92.0, ConfigSampler{44, 1, 1}(10000000000000110101000001010010000011010000))ₜ
 
 julia> extract_solution(reduction_result, 1 .- 2 .* Int.(read_config(result)))
